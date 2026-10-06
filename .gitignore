@@ -37,3 +37,5 @@ replay_pid*
 **/.angular/
 **/out-tsc/
 .DS_Store
+
+/backend/.m2/

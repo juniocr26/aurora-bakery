@@ -1,0 +1,25 @@
+# Explicit opt-in; production/runtime Dockerfile targets remain unchanged.
+services:
+  backend:
+    image: aurora-bakery-backend:development
+    build:
+      target: development
+    working_dir: /workspace
+    volumes:
+      - ./backend:/workspace
+      - ./backend/.m2:/root/.m2
+    environment:
+      DEV_SEED_ENABLED: "false"
+      SPRING_FLYWAY_ENABLED: "false"
+    healthcheck:
+      disable: true
+  frontend:
+    image: aurora-bakery-frontend:development
+    depends_on:
+      backend:
+        condition: service_started
+    build:
+      target: development-base
+    volumes:
+      - ./frontend:/app
+    command: ["npm", "start", "--", "--poll", "1000"]

@@ -9,3 +9,5 @@ target
 **/*.class
 *.log
 .DS_Store
+
+.m2/

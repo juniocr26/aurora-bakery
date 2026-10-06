@@ -13,7 +13,7 @@ Aurora Bakery is a single-store bakery e-commerce portfolio project built with J
 Install Docker with Compose v2. From a fresh clone:
 
 ```sh
-cp .env.example .env
+if [ ! -e .env ]; then cp .env.example .env; fi
 # Edit .env: use a local development password.
 docker compose config --quiet
 docker compose up --build -d --wait --wait-timeout 180
@@ -61,3 +61,5 @@ The next implementation step is persisted identity with CUSTOMER-only registrati
 ## License
 
 Júnio Rosa · [MIT](LICENSE)
+
+For safe host-persisted dependencies and configuration recovery, see [Docker development setup](docs/en/docker-development-setup.md).

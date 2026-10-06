@@ -1,9 +1,15 @@
 # syntax=docker/dockerfile:1
-FROM eclipse-temurin:25.0.4.1_1-jdk-noble@sha256:0d623ea18d7b0fe1e12a2c0a920f7e950cad433387e5a49d3611e1507fa07602 AS build
+FROM eclipse-temurin:25.0.4.1_1-jdk-noble@sha256:0d623ea18d7b0fe1e12a2c0a920f7e950cad433387e5a49d3611e1507fa07602 AS toolchain
 # Wrapper 3.3.4 falls back to tar.gz without unzip, but the pinned checksum is
 # for the ZIP. Keep the downloaded archive and integrity check consistent.
 RUN apt-get update && apt-get install -y --no-install-recommends unzip \
     && rm -rf /var/lib/apt/lists/*
+FROM toolchain AS development
+WORKDIR /workspace
+ENV MAVEN_USER_HOME=/root/.m2
+CMD ["sh", "./mvnw", "-B", "-ntp", "spring-boot:run"]
+
+FROM toolchain AS build
 ARG MAVEN_CACHE_ID=aurora-bakery-maven
 WORKDIR /workspace
 COPY .mvn .mvn
