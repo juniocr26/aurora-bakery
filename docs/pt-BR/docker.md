@@ -27,4 +27,6 @@ Backend espera saúde do banco; frontend espera readiness do backend, que inclui
 
 `POSTGRES_DATA_SOURCE` e o identificador Maven cache anteriormente configurável não são mais usados. `.env` permanece ignorado. Não há segredos Stripe ou ADMIN na configuração versionada. Para clientes SQL, use localhost, porta configurada e banco/usuário/senha de `.env`.
 
-Veja o README para inicialização, desligamento, reset e testes via Docker. Edições backend exigem `docker compose up --build -d --wait`; código frontend é montado somente para leitura para desenvolvimento ao vivo. Migrações e bootstrap demo opcional executam automaticamente no startup. Overrides de produção, proxies reversos, Makefiles, scripts Docker e pipelines CI versionados não existiam e não foram introduzidos.
+Veja [instalação e execução](setup.md) para inicialização, parada e testes via Docker. Edições backend exigem `docker compose up --build -d --wait`; código frontend é montado somente para leitura para desenvolvimento ao vivo. Migrações e bootstrap demo opcional executam automaticamente no startup. Overrides de produção, proxies reversos, Makefiles, scripts Docker e pipelines CI versionados não existiam e não foram introduzidos.
+
+Para dependências persistidas no host e recuperação segura, siga [desenvolvimento Docker](docker-development-setup.md). O override explícito difere do setup base por imagens descrito acima.

@@ -1,6 +1,6 @@
 # Architecture Decisions & Trade-offs
 
-[English](architecture-decisions.md) | [Português](pt-BR/architecture-decisions.md)
+[English](architecture-decisions.md) | [Português](../pt-BR/architecture-decisions.md)
 
 This document explains the current single-store catalog and its intended e-commerce evolution. Implementation statements come from source, migrations, configuration and tests. Unless an existing document records intent, the rationale below evaluates the current architecture rather than claiming to recover its original motivation. Alternatives are review options, not evidence of a historical evaluation.
 
@@ -8,7 +8,7 @@ This document explains the current single-store catalog and its intended e-comme
 
 - **Implemented:** Spring Boot catalog, PostgreSQL schema, Angular storefront, deny-by-default HTTP security, Docker development environment and catalog/pricing tests.
 - **Designed / architecturally prepared:** CUSTOMER/ADMIN role vocabulary and an executable purchase policy. Neither constitutes persisted identity, loyalty tracking or checkout.
-- **Planned / future work:** login, controlled administrator provisioning, administrative writes, orders, uploads, promotions, loyalty progression, Stripe test payments and notifications. See the [roadmap](en/roadmap.md).
+- **Planned / future work:** login, controlled administrator provisioning, administrative writes, orders, uploads, promotions, loyalty progression, Stripe test payments and notifications. See the [roadmap](roadmap.md).
 
 ## Decision: One bakery in a modular monolith
 
@@ -22,7 +22,7 @@ This document explains the current single-store catalog and its intended e-comme
 
 **Revisit when.** Independently owned modules need different deployment schedules or measured workloads require independent scaling. A multi-store product would require an explicit scope change and data-isolation design.
 
-**Evidence:** [CatalogService](../backend/src/main/java/com/aurorabakery/catalog/application/CatalogService.java), [V2 schema](../backend/src/main/resources/db/migration/V2__single_bakery_catalog.sql), [domain overview](en/architecture.md).
+**Evidence:** [CatalogService](../../backend/src/main/java/com/aurorabakery/catalog/application/CatalogService.java), [V2 schema](../../backend/src/main/resources/db/migration/V2__single_bakery_catalog.sql), [domain overview](architecture.md).
 
 ## Decision: Java and Spring Boot for typed application boundaries
 
@@ -36,7 +36,7 @@ This document explains the current single-store catalog and its intended e-comme
 
 **Revisit when.** Framework cost materially impedes deployment, or query complexity warrants explicit SQL. First measure the actual workload.
 
-**Evidence:** [pom.xml](../backend/pom.xml), [ProductSummary](../backend/src/main/java/com/aurorabakery/catalog/application/ProductSummary.java), [PurchasePolicy](../backend/src/main/java/com/aurorabakery/pricing/domain/PurchasePolicy.java).
+**Evidence:** [pom.xml](../../backend/pom.xml), [ProductSummary](../../backend/src/main/java/com/aurorabakery/catalog/application/ProductSummary.java), [PurchasePolicy](../../backend/src/main/java/com/aurorabakery/pricing/domain/PurchasePolicy.java).
 
 ## Decision: PostgreSQL with versioned schema ownership
 
@@ -50,7 +50,7 @@ This document explains the current single-store catalog and its intended e-comme
 
 **Revisit when.** Catalog size warrants pagination/index analysis, or a reviewed retention policy permits removing legacy data. Orders will need transaction and snapshot rules before implementation.
 
-**Evidence:** [migrations](../backend/src/main/resources/db/migration/), [application.yml](../backend/src/main/resources/application.yml), [PostgreSQL integration tests](../backend/src/test/java/com/aurorabakery/catalog/ProductPostgresIT.java).
+**Evidence:** [migrations](../../backend/src/main/resources/db/migration), [application.yml](../../backend/src/main/resources/application.yml), [PostgreSQL integration tests](../../backend/src/test/java/com/aurorabakery/catalog/ProductPostgresIT.java).
 
 ## Decision: Availability and historical lifecycle instead of inventory
 
@@ -64,7 +64,7 @@ This document explains the current single-store catalog and its intended e-comme
 
 **Revisit when.** Finite batches require stock reservations, or administrative lifecycle/retention requirements become concrete.
 
-**Evidence:** [Product](../backend/src/main/java/com/aurorabakery/catalog/domain/Product.java), [CatalogService](../backend/src/main/java/com/aurorabakery/catalog/application/CatalogService.java), [ProductPostgresIT](../backend/src/test/java/com/aurorabakery/catalog/ProductPostgresIT.java).
+**Evidence:** [Product](../../backend/src/main/java/com/aurorabakery/catalog/domain/Product.java), [CatalogService](../../backend/src/main/java/com/aurorabakery/catalog/application/CatalogService.java), [ProductPostgresIT](../../backend/src/test/java/com/aurorabakery/catalog/ProductPostgresIT.java).
 
 ## Decision: One Angular storefront with explicit request states
 
@@ -78,7 +78,7 @@ This document explains the current single-store catalog and its intended e-comme
 
 **Revisit when.** Search indexing/server rendering becomes a requirement, or administration needs an independent release/security boundary.
 
-**Evidence:** [catalog UI and tests](../frontend/src/app/catalog/), [bootstrap/routes](../frontend/src/main.ts), [proxy](../frontend/proxy.conf.cjs).
+**Evidence:** [catalog UI and tests](../../frontend/src/app/catalog), [bootstrap/routes](../../frontend/src/main.ts), [proxy](../../frontend/proxy.conf.cjs).
 
 ## Decision: Deny writes until identity is implemented
 
@@ -94,7 +94,7 @@ This document explains the current single-store catalog and its intended e-comme
 
 **Revisit when.** Any authenticated or mutation endpoint is introduced; select session/token handling before extending the allowlist.
 
-**Evidence:** [SecurityConfiguration](../backend/src/main/java/com/aurorabakery/configuration/SecurityConfiguration.java), [API/security tests](../backend/src/test/java/com/aurorabakery/catalog/ProductApiTest.java), [identity roadmap](en/roadmap.md).
+**Evidence:** [SecurityConfiguration](../../backend/src/main/java/com/aurorabakery/configuration/SecurityConfiguration.java), [API/security tests](../../backend/src/test/java/com/aurorabakery/catalog/ProductApiTest.java), [identity roadmap](roadmap.md).
 
 ## Decision: Centralize monetary policy before checkout
 
@@ -108,7 +108,7 @@ This document explains the current single-store catalog and its intended e-comme
 
 **Revisit when.** Promotion precedence, refunds, loyalty reversals or per-item rounding become requirements.
 
-**Evidence:** [policy](../backend/src/main/java/com/aurorabakery/pricing/domain/PurchasePolicy.java), [policy tests](../backend/src/test/java/com/aurorabakery/pricing/PurchasePolicyTest.java).
+**Evidence:** [policy](../../backend/src/main/java/com/aurorabakery/pricing/domain/PurchasePolicy.java), [policy tests](../../backend/src/test/java/com/aurorabakery/pricing/PurchasePolicyTest.java).
 
 ## Decision: Keep storage and payment integrations planned until their workflows exist
 
@@ -122,7 +122,7 @@ This document explains the current single-store catalog and its intended e-comme
 
 **Revisit when.** Uploads or checkout are implemented; shared deployments require shared/object storage, and payment retries require explicit idempotency and recovery rules.
 
-**Evidence:** [planned boundaries](en/architecture.md), [roadmap](en/roadmap.md), [dependency list](../backend/pom.xml).
+**Evidence:** [planned boundaries](architecture.md), [roadmap](roadmap.md), [dependency list](../../backend/pom.xml).
 
 ## Decision: Docker for local reproducibility and layered verification
 
@@ -138,4 +138,4 @@ This document explains the current single-store catalog and its intended e-comme
 
 **Revisit when.** Production hosting, deployment automation or failure recovery is required. Keep test database configuration isolated from development data.
 
-**Evidence:** [Compose](../docker-compose.yml), [Docker details](en/docker.md), [tests](../backend/src/test/java/com/aurorabakery/), [frontend tests](../frontend/src/app/catalog/product-list.spec.ts).
+**Evidence:** [Compose](../../docker-compose.yml), [Docker details](docker.md), [tests](../../backend/src/test/java/com/aurorabakery), [frontend tests](../../frontend/src/app/catalog/product-list.spec.ts).

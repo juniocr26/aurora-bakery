@@ -1,6 +1,6 @@
 # Decisões de Arquitetura e Trade-offs
 
-[English](../architecture-decisions.md) | [Português](architecture-decisions.md)
+[English](../en/architecture-decisions.md) | [Português](architecture-decisions.md)
 
 Este documento explica o catálogo atual de uma única padaria e sua evolução pretendida para e-commerce. Afirmações sobre implementação vêm do código, migrações, configuração e testes. Quando não há intenção registrada, o raciocínio avalia a arquitetura atual, sem presumir motivação histórica. Alternativas são opções de revisão, não prova de uma avaliação anterior.
 
@@ -50,7 +50,7 @@ Este documento explica o catálogo atual de uma única padaria e sua evolução 
 
 **Reavaliar quando.** Tamanho justificar paginação/análise de índices ou política de retenção aprovada permitir remover legado. Pedidos precisam de regras de transação/snapshot antes da implementação.
 
-**Evidências:** [migrações](../../backend/src/main/resources/db/migration/), [application.yml](../../backend/src/main/resources/application.yml), [testes PostgreSQL](../../backend/src/test/java/com/aurorabakery/catalog/ProductPostgresIT.java).
+**Evidências:** [migrações](../../backend/src/main/resources/db/migration), [application.yml](../../backend/src/main/resources/application.yml), [testes PostgreSQL](../../backend/src/test/java/com/aurorabakery/catalog/ProductPostgresIT.java).
 
 ## Decisão: Disponibilidade e histórico em vez de inventário
 
@@ -78,7 +78,7 @@ Este documento explica o catálogo atual de uma única padaria e sua evolução 
 
 **Reavaliar quando.** Indexação/renderização no servidor for necessária ou admin exigir fronteira independente de release/segurança.
 
-**Evidências:** [UI/testes](../../frontend/src/app/catalog/), [rotas](../../frontend/src/main.ts), [proxy](../../frontend/proxy.conf.cjs).
+**Evidências:** [UI/testes](../../frontend/src/app/catalog), [rotas](../../frontend/src/main.ts), [proxy](../../frontend/proxy.conf.cjs).
 
 ## Decisão: Negar escritas até implementar identidade
 
@@ -138,4 +138,4 @@ Este documento explica o catálogo atual de uma única padaria e sua evolução 
 
 **Reavaliar quando.** Hosting de produção, automação de deploy ou recuperação forem necessários. Manter banco de testes isolado de dados dev.
 
-**Evidências:** [Compose](../../docker-compose.yml), [Docker](docker.md), [testes backend](../../backend/src/test/java/com/aurorabakery/), [testes frontend](../../frontend/src/app/catalog/product-list.spec.ts).
+**Evidências:** [Compose](../../docker-compose.yml), [Docker](docker.md), [testes backend](../../backend/src/test/java/com/aurorabakery), [testes frontend](../../frontend/src/app/catalog/product-list.spec.ts).

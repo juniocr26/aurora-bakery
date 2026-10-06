@@ -27,6 +27,6 @@ Backend waits for database health, frontend waits for backend readiness. Backend
 
 `POSTGRES_DATA_SOURCE` and previous configurable Maven cache identity are no longer used. `.env` stays ignored. There are no Stripe or administrator secrets in committed configuration. For SQL clients: localhost, configured database port, database/user/password from `.env`.
 
-See the root README for startup, shutdown, reset and Docker-only testing commands. Backend edits require `docker compose up --build -d --wait`; frontend source is mounted read-only for live development. Database migrations and optional demo bootstrap run automatically at backend startup. Production overrides, reverse proxies, Makefiles, Docker scripts and tracked CI pipelines were absent and are not introduced.
+See [setup and execution](setup.md) for startup, shutdown and Docker-only testing commands. Backend edits require `docker compose up --build -d --wait`; frontend source is mounted read-only for live development. Database migrations and optional demo bootstrap run automatically at backend startup. Production overrides, reverse proxies, Makefiles, Docker scripts and tracked CI pipelines were absent and are not introduced.
 
 For host-persisted development dependencies and safe recovery, follow [Docker development setup](docker-development-setup.md). Its explicit override differs from the base image-based setup above.

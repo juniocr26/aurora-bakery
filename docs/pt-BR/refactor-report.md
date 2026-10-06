@@ -1,6 +1,6 @@
 # Relatório da reestruturação Aurora Bakery
 
-[English](../refactor-report.md) | [Português](refactor-report.md)
+[English](../en/refactor-report.md) | [Português](refactor-report.md)
 
 Este relatório descreve a reestruturação anterior. Seus resultados de runtime são históricos e não representam novas execuções da revisão documental.
 
@@ -49,7 +49,7 @@ docker compose run --rm --no-deps frontend npm run build
 docker compose run --rm --no-deps frontend npm test
 ```
 
-Backend executou `./mvnw -B -ntp verify -Pintegration` na imagem build-stage, com socket, override host e fonte final somente leitura. SQL e Node fetch conferiram migrações, fixtures, readiness, frontend e igualdade API/proxy. Veja [verificação](verification.md) e README.
+Backend executou `./mvnw -B -ntp verify -Pintegration` na imagem build-stage, com socket, override host e fonte final somente leitura. SQL e Node fetch conferiram migrações, fixtures, readiness, frontend e igualdade API/proxy. Veja [verificação](verification.md) e [testes](testing.md).
 
 **Registro histórico:** a stack completa iniciou com sucesso naquela verificação. Não é declaração do estado atual dos containers. Três serviços passaram saúde; logs sem erro de aplicação. Avisos normais Angular/toolchain e restart de inicialização PostgreSQL permaneceram. Nenhuma configuração ativa usa identidade antiga; V1 preserva schema histórico. Logs de modernização/artefatos ignorados não são configuração ativa.
 

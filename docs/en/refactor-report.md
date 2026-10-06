@@ -1,6 +1,6 @@
 # Aurora Bakery restructuring report
 
-[English](refactor-report.md) | [Português](pt-BR/refactor-report.md)
+[English](refactor-report.md) | [Português](../pt-BR/refactor-report.md)
 
 This report describes the earlier restructuring; its runtime results are historical, not new runs during the documentation review.
 
@@ -51,7 +51,7 @@ docker compose run --rm --no-deps frontend npm run build
 docker compose run --rm --no-deps frontend npm test
 ```
 
-Backend verification executed `./mvnw -B -ntp verify -Pintegration` inside the build-stage image with a Docker socket, host override and read-only final source mount. SQL and Node fetch checks verified successful migrations, fixture rows, database readiness, frontend startup and direct/proxied API equality. See [verification](en/verification.md) and the README for reproducible test commands.
+Backend verification executed `./mvnw -B -ntp verify -Pintegration` inside the build-stage image with a Docker socket, host override and read-only final source mount. SQL and Node fetch checks verified successful migrations, fixture rows, database readiness, frontend startup and direct/proxied API equality. See [verification](verification.md) and [testing](testing.md) for reproducible test commands.
 
 **Historical refactor verification:** the complete development stack started successfully during that verification. This is not a statement of current container state. All three services passed health checks. Logs show no application startup/runtime errors. Standard toolchain/Angular development warnings and PostgreSQL's normal initialization restart remain. No required service/configuration references the old project identity. V1 and its historical schema terminology are retained for migration integrity. Ignored historical modernization logs/generated artifacts are not active configuration.
 
