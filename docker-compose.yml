@@ -1,10 +1,10 @@
-name: aurora-bakery
+name: payment-reconciliation-lab
 services:
   db:
     image: postgres:17.11-bookworm@sha256:639ab7ceb90e13123085b741fb31ef493fba25463002f6da665352e7b534b652
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-aurora_bakery}
-      POSTGRES_USER: ${POSTGRES_USER:-aurora_bakery}
+      POSTGRES_DB: ${POSTGRES_DB:-payment_reconciliation_lab}
+      POSTGRES_USER: ${POSTGRES_USER:-payment_reconciliation_lab}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set a development password in .env}
     ports:
       - "127.0.0.1:${POSTGRES_HOST_PORT:-5432}:5432"
@@ -20,16 +20,15 @@ services:
     build:
       context: ./backend
       args:
-        MAVEN_CACHE_ID: aurora-bakery-maven
+        MAVEN_CACHE_ID: payment-reconciliation-lab-maven
         APP_UID: ${APP_UID:-10001}
         APP_GID: ${APP_GID:-10001}
     environment:
       APP_ENV: ${APP_ENV:-dev}
-      DB_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-aurora_bakery}
-      POSTGRES_USER: ${POSTGRES_USER:-aurora_bakery}
+      DB_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-payment_reconciliation_lab}
+      POSTGRES_USER: ${POSTGRES_USER:-payment_reconciliation_lab}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set a development password in .env}
       ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:4200}
-      ADMIN_DISCOUNT_PERCENT: ${ADMIN_DISCOUNT_PERCENT:-15}
       DEV_SEED_ENABLED: ${DEV_SEED_ENABLED:-false}
     ports:
       - "127.0.0.1:${BACKEND_HOST_PORT:-8080}:8080"
@@ -59,3 +58,4 @@ services:
     restart: unless-stopped
 volumes:
   db_data:
+    name: ${POSTGRES_VOLUME_NAME:-payment-reconciliation-lab_db_data}

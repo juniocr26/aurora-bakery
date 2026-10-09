@@ -10,7 +10,7 @@ ENV MAVEN_USER_HOME=/root/.m2
 CMD ["sh", "./mvnw", "-B", "-ntp", "spring-boot:run"]
 
 FROM toolchain AS build
-ARG MAVEN_CACHE_ID=aurora-bakery-maven
+ARG MAVEN_CACHE_ID=payment-reconciliation-lab-maven
 WORKDIR /workspace
 COPY .mvn .mvn
 COPY mvnw pom.xml ./
@@ -20,13 +20,13 @@ COPY src src
 RUN --mount=type=cache,id=${MAVEN_CACHE_ID},target=/root/.m2 ./mvnw -B -ntp package -DskipTests
 
 FROM eclipse-temurin:25.0.4.1_1-jre-noble@sha256:398f810215757dc1926390014272579fb0e57c41ef1c8aa4f64ae761613a168b AS runtime
-LABEL org.opencontainers.image.title="Aurora Bakery Backend"
+LABEL org.opencontainers.image.title="Payment Reconciliation Lab Backend"
 ARG APP_UID=10001
 ARG APP_GID=10001
-RUN groupadd --gid $APP_GID aurora && useradd --uid $APP_UID --gid $APP_GID --create-home aurora
+RUN groupadd --gid $APP_GID app && useradd --uid $APP_UID --gid $APP_GID --create-home app
 WORKDIR /app
-COPY --from=build --chown=aurora:aurora /workspace/target/backend-0.0.1-SNAPSHOT.jar app.jar
-USER aurora
+COPY --from=build --chown=app:app /workspace/target/backend-0.0.1-SNAPSHOT.jar app.jar
+USER app
 EXPOSE 8080
 HEALTHCHECK --interval=10s --timeout=5s --start-period=60s --retries=6 CMD ["/bin/bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/8080; printf 'GET /actuator/health/readiness HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n' >&3; head -n 1 <&3 | grep -q ' 200 '"]
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]

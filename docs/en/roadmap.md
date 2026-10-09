@@ -1,5 +1,8 @@
 # Scope and implementation status
 
+> Historical commerce scope. Payment Reconciliation Lab retires the purchase policy and catalog seed. Reconciliation and Stripe remain planned; current infrastructure and transition instructions are in [Docker](docker.md).
+
+
 [English](roadmap.md) | [Português](../pt-BR/roadmap.md)
 
 ## Completed in this restructuring

@@ -1,8 +1,8 @@
-# aurora-bakery
+# Payment Reconciliation Lab
 
 [English](README.md) | [Português brasileiro](README.pt-BR.md)
 
-A Java/Spring Boot and Angular portfolio for a single bakery. The current application provides a read-only product catalog and an independent pricing policy. Authentication, ordering and Stripe payments are planned.
+A backend engineering lab transitioning toward payment reconciliation with Java, Spring Boot, Angular, PostgreSQL and Stripe. Infrastructure identity is updated; the retained read-only catalog is still the current interface. Reconciliation and Stripe integration remain planned. Purchase discounts and catalog seeding are retired.
 
 ## Documentation
 

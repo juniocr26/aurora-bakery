@@ -1,5 +1,8 @@
 # Architecture and domain
 
+> Historical commerce scope. Payment Reconciliation Lab retires the purchase policy and catalog seed. Reconciliation and Stripe remain planned; current infrastructure and transition instructions are in [Docker](docker.md).
+
+
 [English](architecture.md) | [Português](../pt-BR/architecture.md)
 
 Aurora Bakery represents one bakery. A Spring Boot modular monolith exposes explicit DTOs to one Angular application through `/api/v1/products`. Angular's development proxy forwards `/api/**` to the backend; browser URLs remain relative. PostgreSQL stores application data. No store selection or store-scoped authorization remains.

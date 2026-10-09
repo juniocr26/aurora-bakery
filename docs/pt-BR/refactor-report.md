@@ -1,5 +1,8 @@
 # Relatório da reestruturação Aurora Bakery
 
+> Escopo histórico de comércio. Payment Reconciliation Lab remove a política de compra e o seed de catálogo. Reconciliação e Stripe seguem planejados; infraestrutura atual e transição em [Docker](docker.md).
+
+
 [English](../en/refactor-report.md) | [Português](refactor-report.md)
 
 Este relatório descreve a reestruturação anterior. Seus resultados de runtime são históricos e não representam novas execuções da revisão documental.

@@ -1,0 +1,5 @@
+# Fail rather than create an empty volume during an initialized-database transition.
+volumes:
+  db_data:
+    external: true
+    name: ${POSTGRES_VOLUME_NAME:?Set the inspected existing PostgreSQL volume name}

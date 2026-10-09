@@ -1,5 +1,8 @@
 # Escopo e estado da implementação
 
+> Escopo histórico de comércio. Payment Reconciliation Lab remove a política de compra e o seed de catálogo. Reconciliação e Stripe seguem planejados; infraestrutura atual e transição em [Docker](docker.md).
+
+
 [English](../en/roadmap.md) | [Português](roadmap.md)
 
 ## Concluído na reestruturação

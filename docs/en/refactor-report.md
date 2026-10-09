@@ -1,5 +1,8 @@
 # Aurora Bakery restructuring report
 
+> Historical commerce scope. Payment Reconciliation Lab retires the purchase policy and catalog seed. Reconciliation and Stripe remain planned; current infrastructure and transition instructions are in [Docker](docker.md).
+
+
 [English](refactor-report.md) | [Português](../pt-BR/refactor-report.md)
 
 This report describes the earlier restructuring; its runtime results are historical, not new runs during the documentation review.

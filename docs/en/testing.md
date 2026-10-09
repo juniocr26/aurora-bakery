@@ -4,9 +4,9 @@
 No host Java or Node is required for the Docker workflow:
 
 ```sh
-docker build --target build -t aurora-bakery-backend-tests ./backend
-docker run --rm aurora-bakery-backend-tests ./mvnw -B -ntp verify
-docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -e TESTCONTAINERS_HOST_OVERRIDE=host.docker.internal aurora-bakery-backend-tests ./mvnw -B -ntp verify -Pintegration
+docker build --target build -t payment-reconciliation-lab-backend-tests ./backend
+docker run --rm payment-reconciliation-lab-backend-tests ./mvnw -B -ntp verify
+docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -e TESTCONTAINERS_HOST_OVERRIDE=host.docker.internal payment-reconciliation-lab-backend-tests ./mvnw -B -ntp verify -Pintegration
 docker compose run --rm --no-deps frontend npm run build
 docker compose run --rm --no-deps frontend npm test
 ```

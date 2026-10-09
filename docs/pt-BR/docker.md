@@ -2,31 +2,22 @@
 
 [English](../en/docker.md) | [Português](docker.md)
 
-Projeto Compose: `aurora-bakery`. Serviços: `db`, `backend`, `frontend`. Compose gera containers `aurora-bakery-db-1`, `aurora-bakery-backend-1`, `aurora-bakery-frontend-1`, rede `aurora-bakery_default`, volume `aurora-bakery_db_data` e imagens `aurora-bakery-backend` / `aurora-bakery-frontend`. Nomes explícitos de containers são desnecessários. PostgreSQL mantém a imagem oficial fixada.
+## Identidade e configuração
 
-O serviço anterior `postgres` foi renomeado para `db`; nenhum serviço inteiro foi removido, pois os três são necessários. Foram removidas as redes obsoletas `commerce`, `web`, `db_access`, a declaração não usada `postgres_data` e o bind mount legado configurável. Uma rede bridge padrão basta. Portas do host usam loopback. Endereços internos: `db:5432`, `backend:8080`, `frontend:4200`.
+Projeto Compose: `payment-reconciliation-lab`; serviços `db`, `backend`, `frontend` preservados, com nomes de containers gerados. Imagens e labels atualizados; cache Maven `payment-reconciliation-lab-maven`. Backend executa como `app`, com UID/GID configuráveis. Hostnames internos continuam `db:5432` e `http://backend:8080`. Healthcheck de readiness herdado do Dockerfile inclui o banco; frontend aguarda backend saudável. Override de desenvolvimento desabilita esse healthcheck, usa `service_started` e desabilita Flyway.
 
-Backend espera saúde do banco; frontend espera readiness do backend, que inclui conectividade ao banco. O proxy Angular usa `API_PROXY_TARGET=http://backend:8080`; navegadores chamam `/api` relativo. Todos os serviços mantêm health checks. Backend executa como usuário não-root `aurora`, frontend como `node`. Docker ignores excluem segredos, arquivos gerados e dependências do host. O Dockerfile frontend é de desenvolvimento/build, sem promessa de hospedagem de produção.
+Novas instalações usam `POSTGRES_DB=payment_reconciliation_lab` e `POSTGRES_USER=payment_reconciliation_lab`. `POSTGRES_PASSWORD` continua obrigatório. `POSTGRES_VOLUME_NAME` padrão: `payment-reconciliation-lab_db_data`. Portas, origens, perfil e UID/GID foram preservados no `.env` local, que permanece ignorado pelo Git. Política de descontos, bindings, validação e testes removidos. Seed de catálogo e SQL de bootstrap removidos; `DEV_SEED_ENABLED=false`, e true impede startup até existirem fixtures de reconciliação. Registros antigos não são removidos.
 
-## Configuração
+Stripe ainda não tem SDK ou bindings. `STRIPE_SECRET_KEY` vazio é apenas reserva local, sem efeito atual; nomes definitivos e validação dependem da implementação futura. Nunca copie chaves reais para exemplos ou Angular, imprima ambiente resolvido ou versione `.env`.
 
-| Variável | Finalidade / padrão |
-| --- | --- |
-| APP_ENV | `dev` no Compose; habilita OpenAPI local e permite seed |
-| POSTGRES_DB / POSTGRES_USER | `aurora_bakery` |
-| POSTGRES_PASSWORD | Valor local obrigatório; não use o exemplo fora de dev |
-| POSTGRES_HOST_PORT | Listener loopback do banco, 5432 |
-| BACKEND_HOST_PORT | Listener loopback da API, 8080 |
-| FRONTEND_HOST_PORT | Listener loopback Angular, 4200 |
-| ALLOWED_ORIGINS | Origens explícitas separadas por vírgula; atualizar ao mudar porta |
-| DEV_SEED_ENABLED | Produtos demo opt-in; false no Compose, true no exemplo |
-| ADMIN_DISCOUNT_PERCENT | Política backend, 15 por padrão, intervalo 0–100 |
-| APP_UID / APP_GID | Usuário backend não-root, 10001 |
-| DB_URL | Override para backend no host; Compose fornece URL JDBC com `db` |
-| API_PROXY_TARGET | Override frontend no host; Compose fornece hostname backend |
+## Transição preservando dados
 
-`POSTGRES_DATA_SOURCE` e o identificador Maven cache anteriormente configurável não são mais usados. `.env` permanece ignorado. Não há segredos Stripe ou ADMIN na configuração versionada. Para clientes SQL, use localhost, porta configurada e banco/usuário/senha de `.env`.
+Inspeção de 2026-10-09 confirmou projeto `aurora-bakery`, containers `aurora-bakery-{db,backend,frontend}-1`, volume real `aurora-bakery_db_data` em `/var/lib/postgresql/data`, banco/role `aurora_bakery`, três produtos e duas migrações aplicadas. `.dockerized-postgres` não é o mount ativo e permanece intocado.
 
-Veja [instalação e execução](setup.md) para inicialização, parada e testes via Docker. Edições backend exigem `docker compose up --build -d --wait`; código frontend é montado somente para leitura para desenvolvimento ao vivo. Migrações e bootstrap demo opcional executam automaticamente no startup. Overrides de produção, proxies reversos, Makefiles, scripts Docker e pipelines CI versionados não existiam e não foram introduzidos.
+O `.env` local reutiliza esse volume e mantém banco, usuário e senha existentes. Variáveis de inicialização não renomeiam bancos ou roles já criados. Use `compose.existing-db.yaml` para exigir volume externo existente em vez de criar um vazio. Não monte o mesmo volume em dois bancos em execução. Pare todos os serviços antigos antes de iniciar os novos nas mesmas portas. Não exclua volumes nem execute prune ou shutdown com remoção de volumes.
 
-Para dependências persistidas no host e recuperação segura, siga [desenvolvimento Docker](docker-development-setup.md). O override explícito difere do setup base por imagens descrito acima.
+`COMPOSE_PROJECT_NAME` não estava no `.env` ou shell inspecionados. Flags `-p` só aparecem no procedimento para parar explicitamente o projeto antigo. Variáveis exportadas e flags podem sobrepor `name`; `COMPOSE_FILE` também altera arquivos carregados. Confira seu shell/automação. A troca de projeto não renomeia containers antigos automaticamente.
+
+Siga os [comandos completos de inspeção, backup, transição, verificação e rollback](../en/docker.md), partindo da raiz deste repositório. Antes da troca: valide com `config --quiet`, construa imagens, pare frontend/backend antigos, faça backup lógico com `pg_dump`, depois pare o banco antigo. Inicie com `docker compose -f docker-compose.yml -f compose.existing-db.yaml up -d --wait --wait-timeout 180`. Compare mount, registros e histórico Flyway; teste readiness e `/api/v1/products` pelo frontend. Para rollback, pare primeiro os três serviços novos e só então reinicie containers antigos, aguardando saúde de cada dependência.
+
+Instalações novas seguem [setup](setup.md), sem override externo. Dependências: [guia de desenvolvimento](docker-development-setup.md). Evidência atual: [verificação](verification.md); resultados anteriores são históricos.

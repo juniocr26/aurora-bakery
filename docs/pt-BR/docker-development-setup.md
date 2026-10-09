@@ -1,10 +1,10 @@
 # Desenvolvimento Docker e recuperação
 
-Execute os comandos no diretório `aurora-bakery/` do host. Docker Engine/Desktop e Compose são necessários; a auditoria anterior usou Compose v5.1.4 no macOS. As imagens fixam Node 22.23.3 (npm 10.9.9), Java 25.0.4.1 e PostgreSQL 17.11; o Maven Wrapper instala Maven 3.9.11 e o Angular é 21.2.x. npm e Maven no host não são necessários.
+Execute os comandos no diretório `payment-reconciliation-lab/` do host. Docker Engine/Desktop e Compose são necessários; a auditoria anterior usou Compose v5.1.4 no macOS. As imagens fixam Node 22.23.3 (npm 10.9.9), Java 25.0.4.1 e PostgreSQL 17.11; o Maven Wrapper instala Maven 3.9.11 e o Angular é 21.2.x. npm e Maven no host não são necessários.
 
 ## Serviços e segurança
 
-`db` é PostgreSQL, `backend` usa Spring Boot/JPA/Flyway e `frontend` é Angular com proxy para `backend:8080`. Projeto: `aurora-bakery`; portas padrão: 5432, 8080 e 4200 em loopback. O backend base executa migrações Flyway e pode inserir fixtures. Não o inicie contra dados existentes nesta validação.
+`db` é PostgreSQL, `backend` usa Spring Boot/JPA/Flyway e `frontend` é Angular com proxy para `backend:8080`. Projeto: `payment-reconciliation-lab`; portas padrão: 5432, 8080 e 4200 em loopback. O backend base executa migrações Flyway e pode inserir fixtures. Não o inicie contra dados existentes nesta validação.
 
 O override de desenvolvimento usa um workspace JDK/Maven e fontes Angular montadas do host. Desabilita Flyway e seed. O frontend aguarda o processo backend, não sua saúde; confira readiness manualmente. O Dockerfile de runtime continua empacotando um JAR com JRE. As imagens de desenvolvimento têm tags próprias.
 

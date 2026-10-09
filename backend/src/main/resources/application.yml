@@ -1,11 +1,11 @@
 spring:
   application:
-    name: aurora-bakery
+    name: payment-reconciliation-lab
   profiles:
     active: ${APP_ENV:default}
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/aurora_bakery}
-    username: ${POSTGRES_USER:aurora_bakery}
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/${POSTGRES_DB:payment_reconciliation_lab}}
+    username: ${POSTGRES_USER:payment_reconciliation_lab}
     password: ${POSTGRES_PASSWORD}
   jpa:
     open-in-view: false
@@ -44,5 +44,3 @@ app:
     allowed-origins: ${ALLOWED_ORIGINS:http://localhost:4200}
   seed:
     enabled: ${DEV_SEED_ENABLED:false}
-  pricing:
-    admin-discount-percent: ${ADMIN_DISCOUNT_PERCENT:15}

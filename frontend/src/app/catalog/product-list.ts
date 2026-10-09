@@ -11,7 +11,7 @@ type State = { kind: 'loading' } | { kind: 'error' } | { kind: 'ready'; products
   template: `
     <p class="eyebrow">Baked with care</p>
     <h1>Fresh from our oven</h1>
-    <p>Discover bread, pastries and cakes made at Aurora Bakery.</p>
+    <p>Legacy catalog retained during the reconciliation transition.</p>
     <section aria-label="Bakery catalog" [attr.aria-busy]="state().kind === 'loading'">
       @if (state().kind === 'loading') {
         <p role="status">Loading products…</p>

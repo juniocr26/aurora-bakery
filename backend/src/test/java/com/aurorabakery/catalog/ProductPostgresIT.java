@@ -1,12 +1,10 @@
 package com.aurorabakery.catalog;
 
-import com.aurorabakery.catalog.application.DevelopmentCatalogSeed;
 import com.aurorabakery.catalog.domain.Product;
 import com.aurorabakery.catalog.domain.Availability;
 import com.aurorabakery.catalog.infrastructure.ProductRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.DefaultApplicationArguments;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -23,7 +21,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Testcontainers
-@SpringBootTest(properties = {"spring.profiles.active=dev", "app.seed.enabled=true"})
+@SpringBootTest(properties = {"spring.profiles.active=dev", "app.seed.enabled=false"})
 @AutoConfigureMockMvc
 class ProductPostgresIT {
     @Container static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres@sha256:639ab7ceb90e13123085b741fb31ef493fba25463002f6da665352e7b534b652");
@@ -35,7 +33,6 @@ class ProductPostgresIT {
     @Autowired ProductRepository products;
     @Autowired JdbcTemplate jdbc;
     @Autowired MockMvc mvc;
-    @Autowired DevelopmentCatalogSeed seed;
     @BeforeEach void clear() { products.deleteAll(); }
 
     @Test void migrationFiltersAndOrdersRealPostgresRows() throws Exception {
@@ -66,12 +63,6 @@ class ProductPostgresIT {
         assertThatThrownBy(() -> products.saveAndFlush(product("Invalid Slug", true))).isInstanceOf(DataIntegrityViolationException.class);
         assertThatThrownBy(() -> products.saveAndFlush(new Product(UUID.randomUUID(), "blank", " ", new java.math.BigDecimal("10"), Availability.AVAILABLE)))
             .isInstanceOf(DataIntegrityViolationException.class);
-    }
-    @Test void developmentSeedIsRepeatable() throws Exception {
-        seed.run(new DefaultApplicationArguments());
-        seed.run(new DefaultApplicationArguments());
-        assertThat(products.count()).isEqualTo(3);
-        assertThat(products.findByAvailabilityInOrderByFeaturedDescNameAsc(List.of(Availability.AVAILABLE))).hasSize(2);
     }
     @Test void operationalAndLocalDocsEndpointsWork() throws Exception {
         for (String path : List.of("/actuator/health/liveness", "/actuator/health/readiness")) {

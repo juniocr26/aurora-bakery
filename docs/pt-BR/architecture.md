@@ -1,5 +1,8 @@
 # Arquitetura e domínio
 
+> Escopo histórico de comércio. Payment Reconciliation Lab remove a política de compra e o seed de catálogo. Reconciliação e Stripe seguem planejados; infraestrutura atual e transição em [Docker](docker.md).
+
+
 [English](../en/architecture.md) | [Português](architecture.md)
 
 Aurora Bakery representa uma única padaria. Um monólito modular Spring Boot expõe DTOs explícitos para uma aplicação Angular por `/api/v1/products`. O proxy de desenvolvimento encaminha `/api/**` ao backend; as URLs do navegador permanecem relativas. PostgreSQL armazena os dados. Não há seleção de loja ou autorização por loja.

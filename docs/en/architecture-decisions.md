@@ -36,7 +36,7 @@ This document explains the current single-store catalog and its intended e-comme
 
 **Revisit when.** Framework cost materially impedes deployment, or query complexity warrants explicit SQL. First measure the actual workload.
 
-**Evidence:** [pom.xml](../../backend/pom.xml), [ProductSummary](../../backend/src/main/java/com/aurorabakery/catalog/application/ProductSummary.java), [PurchasePolicy](../../backend/src/main/java/com/aurorabakery/pricing/domain/PurchasePolicy.java).
+**Evidence:** [pom.xml](../../backend/pom.xml), [ProductSummary](../../backend/src/main/java/com/aurorabakery/catalog/application/ProductSummary.java).
 
 ## Decision: PostgreSQL with versioned schema ownership
 
@@ -100,7 +100,7 @@ This document explains the current single-store catalog and its intended e-comme
 
 **Context.** Discount stacking and administrator eligibility need one deterministic server policy.
 
-**Decision and why.** `PurchasePolicy` applies a configurable ADMIN percentage (default 15%), excludes ADMIN from loyalty/marketing, and chooses the greater eligible promotion/loyalty percentage for CUSTOMER. It validates percentage ranges and rounds totals to two decimal places with HALF_UP. Keeping these rules outside controllers makes policy tests independent of HTTP/database setup.
+**Decision and why.** `PurchasePolicy` (retired / removida em 2026-10-09) applies a configurable ADMIN percentage (default 15%), excludes ADMIN from loyalty/marketing, and chooses the greater eligible promotion/loyalty percentage for CUSTOMER. It validates percentage ranges and rounds totals to two decimal places with HALF_UP. Keeping these rules outside controllers makes policy tests independent of HTTP/database setup.
 
 **Alternatives.** UI calculations duplicate business rules and can be tampered with. Stacked discounts change commercial behavior and complicate explanation of totals.
 
@@ -108,7 +108,6 @@ This document explains the current single-store catalog and its intended e-comme
 
 **Revisit when.** Promotion precedence, refunds, loyalty reversals or per-item rounding become requirements.
 
-**Evidence:** [policy](../../backend/src/main/java/com/aurorabakery/pricing/domain/PurchasePolicy.java), [policy tests](../../backend/src/test/java/com/aurorabakery/pricing/PurchasePolicyTest.java).
 
 ## Decision: Keep storage and payment integrations planned until their workflows exist
 

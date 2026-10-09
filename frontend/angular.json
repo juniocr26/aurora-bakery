@@ -5,7 +5,7 @@
     "analytics": false
   },
   "projects": {
-    "aurora-bakery": {
+    "payment-reconciliation-lab": {
       "projectType": "application",
       "root": "",
       "sourceRoot": "src",
@@ -42,7 +42,7 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "development": {
-              "buildTarget": "aurora-bakery:build:development"
+              "buildTarget": "payment-reconciliation-lab:build:development"
             }
           },
           "defaultConfiguration": "development"

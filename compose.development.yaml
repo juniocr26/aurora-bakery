@@ -1,7 +1,7 @@
 # Explicit opt-in; production/runtime Dockerfile targets remain unchanged.
 services:
   backend:
-    image: aurora-bakery-backend:development
+    image: payment-reconciliation-lab-backend:development
     build:
       target: development
     working_dir: /workspace
@@ -14,7 +14,7 @@ services:
     healthcheck:
       disable: true
   frontend:
-    image: aurora-bakery-frontend:development
+    image: payment-reconciliation-lab-frontend:development
     depends_on:
       backend:
         condition: service_started

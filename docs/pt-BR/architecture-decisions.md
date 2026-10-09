@@ -36,7 +36,7 @@ Este documento explica o catálogo atual de uma única padaria e sua evolução 
 
 **Reavaliar quando.** Custo do framework dificultar implantação ou consultas justificarem SQL explícito. Primeiro medir a carga real.
 
-**Evidências:** [pom.xml](../../backend/pom.xml), [ProductSummary](../../backend/src/main/java/com/aurorabakery/catalog/application/ProductSummary.java), [PurchasePolicy](../../backend/src/main/java/com/aurorabakery/pricing/domain/PurchasePolicy.java).
+**Evidências:** [pom.xml](../../backend/pom.xml), [ProductSummary](../../backend/src/main/java/com/aurorabakery/catalog/application/ProductSummary.java).
 
 ## Decisão: PostgreSQL com evolução versionada de schema
 
@@ -100,7 +100,7 @@ Este documento explica o catálogo atual de uma única padaria e sua evolução 
 
 **Contexto.** Acúmulo de descontos e elegibilidade ADMIN precisam de política determinística única no servidor.
 
-**Decisão e justificativa.** `PurchasePolicy` aplica porcentagem ADMIN configurável (15% padrão), exclui ADMIN de fidelidade/marketing e escolhe o maior desconto elegível de promoção/fidelidade para CUSTOMER. Valida porcentagens e arredonda total a duas casas com HALF_UP. Fora de controllers, regras são testáveis sem HTTP/banco.
+**Decisão e justificativa.** `PurchasePolicy` (retired / removida em 2026-10-09) aplica porcentagem ADMIN configurável (15% padrão), exclui ADMIN de fidelidade/marketing e escolhe o maior desconto elegível de promoção/fidelidade para CUSTOMER. Valida porcentagens e arredonda total a duas casas com HALF_UP. Fora de controllers, regras são testáveis sem HTTP/banco.
 
 **Alternativas.** Cálculo na UI duplica regras e permite adulteração. Acumular descontos muda comportamento comercial e complica explicar totais.
 
@@ -108,7 +108,6 @@ Este documento explica o catálogo atual de uma única padaria e sua evolução 
 
 **Reavaliar quando.** Precedência de promoções, reembolsos, reversão de fidelidade ou arredondamento por item forem requisitos.
 
-**Evidências:** [política](../../backend/src/main/java/com/aurorabakery/pricing/domain/PurchasePolicy.java), [testes](../../backend/src/test/java/com/aurorabakery/pricing/PurchasePolicyTest.java).
 
 ## Decisão: Manter storage e pagamento planejados até existir o fluxo
 

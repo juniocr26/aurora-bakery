@@ -13,7 +13,7 @@ docker compose up --build -d --wait --wait-timeout 180
 
 Em um checkout existente, atualize `.env` conforme as variáveis documentadas, sem sobrescrevê-lo. Aplicação: http://localhost:4200/products. API: http://localhost:8080/api/v1/products. Swagger local: http://localhost:8080/swagger-ui/index.html. Readiness: http://localhost:8080/actuator/health/readiness.
 
-Flyway cria/atualiza o schema na inicialização do backend; Hibernate o valida. `DEV_SEED_ENABLED=true` insere três produtos fictícios, de forma idempotente, apenas no perfil `dev`. Não há seed de contas ou credenciais administrativas. Desabilite a opção para iniciar um catálogo vazio; isso não remove registros existentes.
+Migrações Flyway preservadas; Hibernate valida o schema. Seed de catálogo e política de compra removidos. Mantenha `DEV_SEED_ENABLED=false`; fixtures de reconciliação e Stripe ainda não foram implementados. Antes de iniciar um checkout existente, siga [a transição preservando dados](docker.md).
 
 ```sh
 docker compose ps
