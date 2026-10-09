@@ -15,3 +15,7 @@ The integration runner needs access to a local Docker daemon and uses a separate
 
 
 When running unit tests in the development backend, use `docker compose -f docker-compose.yml -f compose.development.yaml exec -T -e APP_ENV=default backend sh ./mvnw -B -ntp test`. Otherwise inherited `APP_ENV=dev` changes the OpenAPI security assertion. The integration suite owns a new Testcontainers PostgreSQL instance, but its `@BeforeEach` deletes test rows; never point it at an existing database. Integration tests were not rerun in this documentation pass.
+
+## Current source inventory — 2026-10-09
+
+Source inspection finds 7 backend unit/API test methods (5 ProductApiTest, 2 DevelopmentSeedConfigurationTest), 5 opt-in ProductPostgresIT methods and 4 Angular cases. This is an inventory, not a passing result. HTTP fakes exercise DTOs, empty/error responses, blocked routes and CORS; seed tests assert default disablement and explicit rejection of the retired flag. PostgreSQL cases exercise both migrations, constraints, visibility/order, preserved hidden rows and health/dev docs. No purchase-policy, repeatable-seed or reconciliation/Stripe test remains. Historical counts in verification/refactor reports describe the earlier checkout. No tests, builds, dependency installation or services were run during this audit.

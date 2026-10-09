@@ -1,12 +1,12 @@
 # Docker development setup and recovery
 
-Run every command below from the host `payment-reconciliation-lab/` directory. Docker Engine/Desktop and Docker Compose are required; the audit used Compose v5.1.4 on macOS. Images pin Node 22.23.3 (npm 10.9.9), Java 25.0.4.1 and PostgreSQL 17.11. The tracked Maven wrapper installs Maven 3.9.11; Angular is 21.2.x. No host npm or Maven installation is required.
+Run every command below from the host `payment-reconciliation-lab/` directory. Docker Engine/Desktop and Docker Compose are required; the previous dependency audit used Compose v5.1.4 on macOS. Images pin Node 22.23.3 (npm 10.9.9), Java 25.0.4.1 and PostgreSQL 17.11. The tracked Maven wrapper installs Maven 3.9.11; Angular is 21.2.x. No host npm or Maven installation is required.
 
 ## Services and safety
 
-`db` is PostgreSQL; `backend` is Spring Boot/JPA/Flyway; `frontend` is Angular with an API proxy to `backend:8080`. Project name remains `payment-reconciliation-lab`. Default host ports are 5432, 8080 and 4200 on loopback. The base backend runs Flyway migrations automatically and may seed when enabled. Do not start it against existing data during a dependency audit.
+`db` is PostgreSQL; `backend` is Spring Boot/JPA/Flyway; `frontend` is Angular with an API proxy to `backend:8080`. Project name remains `payment-reconciliation-lab`. Default host ports are 5432, 8080 and 4200 on loopback. The base backend runs Flyway migrations automatically and rejects the retired seed flag when enabled. Do not start it against existing data during a dependency audit.
 
-The frontend waits for backend process startup rather than health in this override; readiness still needs manual verification. The explicit development override uses a JDK/Maven source workspace and an Angular source bind mount. It disables Flyway and demo seeding. The runtime Dockerfile still packages a JAR and uses the existing JRE entrypoint. Development images have separate tags. Existing database data is untouched.
+The frontend waits for backend process startup rather than health in this override; readiness still needs manual verification. The explicit development override uses a JDK/Maven source workspace and an Angular source bind mount. It disables Flyway and keeps the retired seed flag false. The runtime Dockerfile still packages a JAR and uses the existing JRE entrypoint. Development images have separate tags. Existing database data is untouched.
 
 ## Fresh clone and dependency installation
 

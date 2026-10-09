@@ -1,30 +1,27 @@
 # Architecture and domain
 
-> Historical commerce scope. Payment Reconciliation Lab retires the purchase policy and catalog seed. Reconciliation and Stripe remain planned; current infrastructure and transition instructions are in [Docker](docker.md).
-
-
 [English](architecture.md) | [Português](../pt-BR/architecture.md)
 
-Aurora Bakery represents one bakery. A Spring Boot modular monolith exposes explicit DTOs to one Angular application through `/api/v1/products`. Angular's development proxy forwards `/api/**` to the backend; browser URLs remain relative. PostgreSQL stores application data. No store selection or store-scoped authorization remains.
+Payment Reconciliation Lab is transitioning from the Aurora Bakery study scope toward payment reconciliation. The infrastructure identity has changed; the current application still exposes a legacy read-only catalog. Reconciliation and Stripe are planned, without implemented reconciliation entities, endpoints, jobs or provider calls. The [restructuring report](refactor-report.md) preserves the earlier commerce history, not the current product roadmap.
 
 ## Implemented modules
 
-Catalog separates API, application, domain and persistence. Products contain slug, name, description, BRL price, category, optional relative image reference, featured status, availability and timestamps. Featured status is independent of discounts. The public query includes AVAILABLE and TEMPORARILY_UNAVAILABLE products, ordered by featured status and name. Only AVAILABLE is purchasable. DISCONTINUED and ARCHIVED are hidden, with records preserved. There is no delete API or inventory quantity.
+A Spring Boot application serves `GET /api/v1/products`. `ProductController` delegates to a transactional read-only `CatalogService`; the service calls a concrete Spring Data JPA `ProductRepository` and maps entities to explicit `ProductSummary` records. This is pragmatic layering, not strict dependency inversion: application imports infrastructure and entities use JPA annotations.
 
-Identity currently defines the CUSTOMER and ADMIN vocabulary only; no persisted account model or login exists. Pricing contains a pure backend purchase policy: configurable ADMIN discount (default 15%), exclusion from loyalty and marketing regardless of consent, and no stacking with customer benefits. Customers receive the greater of eligible promotion/loyalty percentages. This policy is tested but not connected to a purchase endpoint. Future checkout must resolve identity and eligible benefits server-side; never accept role or discount eligibility from clients.
+Products retain legacy slug/name/description, BRL price, category, optional image metadata, featured/availability state and timestamps. The query includes AVAILABLE and TEMPORARILY_UNAVAILABLE, ordered by featured descending and name ascending. `purchasable` is true only for AVAILABLE; it is metadata, not a working purchase flow. DISCONTINUED and ARCHIVED rows are retained but hidden. There is no pagination, write endpoint, inventory or upload implementation.
 
-Security permits public catalog reads, non-sensitive health and dev-only OpenAPI; unmatched and mutation routes are denied. There are no publicly assignable roles or password fields. Existing stateless/CSRF-disabled configuration is appropriate only to the current read-only API; revisit it when selecting session or bearer authentication. Explicit CORS origins are required. API failures do not expose exception details.
+Angular lazily loads `/products`; relative `/api` calls use the development proxy to `backend`. A discriminated signal state distinguishes loading, error, empty and populated results; retry issues a new request. The legacy storefront remains visible, including bakery wording. No reconciliation UI exists yet.
+
+Security permits explicit catalog/health GETs and dev-profile OpenAPI, then denies other routes. CORS lists allowed origins, methods and headers; no login or persisted identity exists. CUSTOMER/ADMIN and purchase-policy code/tests have been removed. Client failures use generic Problem Details; server logs retain exceptions. Stateless/CSRF-disabled configuration describes the current read API and must be revisited before authenticated writes.
 
 ## Database evolution
 
-V1 remains unchanged to preserve Flyway checksums. V2 renames the former directory table to `legacy_stores` for historical preservation and creates the single-bakery products table. Legacy rows are not exposed or used by application code. A fresh database also applies both migrations. Development fixture SQL is separate from schema migrations. Hibernate uses validation, not schema generation.
+Flyway retains V1 and V2. V2 renames `stores` to `legacy_stores` and creates constrained products; fresh databases apply both migrations. No reconciliation migration exists. Hibernate validates rather than generates schema, and `open-in-view=false` keeps entity mapping within the service transaction. Preserve applied migration checksums and initialized database credentials during the [infrastructure transition](docker.md).
+
+Catalog seed SQL is removed. `DevelopmentSeedConfiguration` instead rejects `app.seed.enabled=true` with an ApplicationRunner failure: keep `DEV_SEED_ENABLED=false`. The base runtime still runs Flyway automatically; the development override disables it and therefore requires an initialized schema. No reconciliation fixture generation is implemented.
 
 ## Planned lifecycle and boundaries
 
-Persist one account identity with CUSTOMER/ADMIN roles. Public registration creates CUSTOMER only and validates name, email, password and CPF; phone and marketing consent are optional. Provision ADMIN through an explicit internal command that hashes an environment-supplied password and never changes existing roles silently. No public admin registration. ADMIN can shop with the purchase policy and receives transactional messages for their own orders.
+Only the direction toward reconciliation and a Stripe test integration is established. The reserved `STRIPE_SECRET_KEY` has no application binding, validation or SDK consumer; Compose does not pass it to the backend. A public example entry is not an implemented integration.
 
-Future orders snapshot product name, unit price and applied discounts. The proposed minimal lifecycle is AWAITING_PAYMENT → PAID → PREPARING → READY → COMPLETED, with CANCELLED/PAYMENT_FAILED branches and validated transitions. Loyalty must count verified paid/completed orders once, never cancelled/failed payments. Refund/reversal behavior needs definition before implementation.
-
-Stripe test payments belong behind a payment port; verified signed webhooks, idempotent handling and server-owned totals establish payment state. No Stripe dependency, keys, endpoint or fake payment currently exists. Marketing requires customer consent; WhatsApp also requires optional phone and explicit opt-in. Transactional communication has separate preferences/purpose. Notifications can start with application-level processing; reliability requirements should determine any durable outbox later.
-
-Future product uploads use a storage port with local filesystem implementation, relative metadata, generated filenames, size/type checks and traversal protection. No upload endpoint exists yet. Object storage is preferable for horizontal production scaling. Archive scheduling can use Spring scheduling and configurable age without extra services.
+Before adding workflows, define reconciliation inputs, matching rules, monetary/currency representation, discrepancy states, replay/idempotency and authorized review operations. Signed provider events, server-owned financial records and duplicate-event handling are reasonable study considerations, not selected or implemented contracts. Earlier CUSTOMER/ADMIN registration, loyalty, bakery checkout, order states and uploads belong to the historical commerce scope and are not current delivery commitments. See the [roadmap](roadmap.md) and [architecture decisions](architecture-decisions.md).

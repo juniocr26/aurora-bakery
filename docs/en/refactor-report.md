@@ -67,3 +67,7 @@ The current product constructor supplies basic catalog defaults; future admin cr
 Intentionally deferred: SSO, WhatsApp, object storage, automatic configurable archiving and durable background delivery. These require no additional infrastructure today. Multi-tenancy, payroll, ERP and accounting are outside scope.
 
 **Recommended next increment:** implement and test shared persisted identity with CUSTOMER-only registration, hashed passwords, an explicit internal ADMIN provisioning command and backend role authorization; then enable administrative product mutations in the same Angular application.
+
+## Current boundary — 2026-10-09
+
+The counts, commerce policies, fixture insertion and recommended next increment above describe the earlier refactor. Current source has removed identity/pricing packages, purchase-policy tests and seed SQL; enabling the retired seed flag fails startup. Reconciliation/Stripe remain planned. Use [current architecture](architecture.md), [roadmap](roadmap.md) and [test inventory](testing.md) for today’s state. No historical runtime results were rerun in this documentation audit.

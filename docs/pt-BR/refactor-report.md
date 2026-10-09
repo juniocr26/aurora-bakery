@@ -65,3 +65,7 @@ Construtor Product usa defaults básicos; criação admin futura exige inputs va
 Adiados: SSO, WhatsApp, object storage, arquivamento automático configurável e entrega durável em background. Sem necessidade atual de infraestrutura adicional. Multi-tenancy, folha, ERP e contabilidade estão fora do escopo.
 
 **Próximo incremento recomendado:** identidade persistida, cadastro CUSTOMER, hash de senha, comando interno ADMIN e autorização backend; depois mutações administrativas na mesma aplicação Angular.
+
+## Fronteira atual — 2026-10-09
+
+Contagens, regras de comércio, inserção de fixtures e próximo incremento acima descrevem a reestruturação anterior. Código atual removeu pacotes de identidade/preços, testes da política e SQL de seed; habilitar a flag removida falha o startup. Reconciliação/Stripe seguem planejados. Consulte [arquitetura atual](architecture.md), [roadmap](roadmap.md) e [inventário de testes](testing.md). Resultados históricos não foram reexecutados nesta auditoria.

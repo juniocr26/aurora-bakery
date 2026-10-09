@@ -26,4 +26,4 @@ docker compose stop
 [Testes](testing.md).
 
 
-[Dependências persistidas no host e recuperação](docker-development-setup.md). A inicialização base executa migrações e seed opcional; use o override de desenvolvimento existente para desabilitar ambos ao preservar um banco inicializado. Nunca execute testes de escrita contra dados da aplicação.
+[Dependências persistidas no host e recuperação](docker-development-setup.md). A inicialização base executa migrações; a flag do seed removido deve permanecer false. Use o override existente para desabilitar Flyway ao preservar um banco inicializado. Nunca execute testes de escrita contra dados da aplicação.

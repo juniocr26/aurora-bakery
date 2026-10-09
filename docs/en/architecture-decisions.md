@@ -2,19 +2,19 @@
 
 [English](architecture-decisions.md) | [Português](../pt-BR/architecture-decisions.md)
 
-This document explains the current single-store catalog and its intended e-commerce evolution. Implementation statements come from source, migrations, configuration and tests. Unless an existing document records intent, the rationale below evaluates the current architecture rather than claiming to recover its original motivation. Alternatives are review options, not evidence of a historical evaluation.
+This document explains the current retained catalog and the transition toward payment reconciliation. Implementation statements come from source, migrations, configuration and tests. Unless an existing document records intent, the rationale below evaluates the current architecture rather than claiming to recover its original motivation. Alternatives are review options, not evidence of a historical evaluation.
 
 ## Implementation status
 
-- **Implemented:** Spring Boot catalog, PostgreSQL schema, Angular storefront, deny-by-default HTTP security, Docker development environment and catalog/pricing tests.
-- **Designed / architecturally prepared:** CUSTOMER/ADMIN role vocabulary and an executable purchase policy. Neither constitutes persisted identity, loyalty tracking or checkout.
-- **Planned / future work:** login, controlled administrator provisioning, administrative writes, orders, uploads, promotions, loyalty progression, Stripe test payments and notifications. See the [roadmap](roadmap.md).
+- **Implemented:** Spring Boot catalog, PostgreSQL schema, Angular storefront, deny-by-default HTTP security, Docker development environment and catalog/security and retired-seed rejection tests.
+- **Retired:** CUSTOMER/ADMIN vocabulary, purchase policy and catalog seed. Historical commerce decisions remain in the restructuring report.
+- **Planned / future work:** reconciliation workflows and Stripe test integration; domain rules and access contracts still need definition. See the [roadmap](roadmap.md).
 
-## Decision: One bakery in a modular monolith
+## Decision: Retain a modular monolith during the domain transition
 
-**Context.** The current product explores a bakery storefront, not merchant onboarding or franchise management.
+**Context.** The implementation retains a bakery catalog during transition; no reconciliation workflow exists yet.
 
-**Decision and why.** One Spring Boot application contains catalog, identity vocabulary and pricing packages. The products schema has no tenant ownership. This keeps catalog queries and future order transactions within one application/database boundary; microservices would add network failures and deployment coordination before there are independent workflows to deploy.
+**Decision and why.** One Spring Boot application retains catalog and configuration packages. The products schema has no tenant ownership. This keeps current catalog queries within one application/database boundary; microservices would add network failures and deployment coordination before there are independent workflows to deploy.
 
 **Alternatives.** A multi-tenant SaaS would require tenant-aware keys, authorization and isolation tests. Independently deployed catalog/order services would require contracts and consistency across services.
 
@@ -28,11 +28,11 @@ This document explains the current single-store catalog and its intended e-comme
 
 **Context.** Catalog data and future monetary rules need explicit contracts and testable server-side behavior.
 
-**Decision and why.** Java records express response DTOs, enums constrain availability/roles, and `BigDecimal` makes rounding explicit. Spring MVC, dependency injection, Security, JPA, Flyway and Actuator integrate HTTP, persistence and operations in one runtime. The present benefit is visible in a thin controller and transactional read service; it is not a claim of measured performance or an original language-selection motive.
+**Decision and why.** Java records express response DTOs, enums constrain availability, and `BigDecimal` represents decimal catalog prices. Spring MVC, dependency injection, Security, JPA, Flyway and Actuator integrate HTTP, persistence and operations in one runtime. The present benefit is visible in a thin controller and transactional read service; it is not a claim of measured performance or an original language-selection motive.
 
 **Alternatives.** A smaller Python/FastAPI or Go HTTP application could serve this catalog but would require different persistence/security integration. Spring JDBC could make SQL more explicit than JPA.
 
-**Trade-offs and consequences.** Framework configuration and a Java 25 toolchain are required even for a small read API. ORM annotations couple the product entity to persistence, and Spring annotations appear in the pricing policy; logical boundaries are clear but not framework independent. Explicit DTO mapping avoids exposing entity internals and allows the public contract to evolve separately.
+**Trade-offs and consequences.** Framework configuration and a Java 25 toolchain are required even for a small read API. ORM annotations couple the product entity to persistence; logical boundaries are clear but not framework independent. Explicit DTO mapping avoids exposing entity internals and allows the public contract to evolve separately.
 
 **Revisit when.** Framework cost materially impedes deployment, or query complexity warrants explicit SQL. First measure the actual workload.
 
@@ -74,7 +74,7 @@ This document explains the current single-store catalog and its intended e-comme
 
 **Alternatives.** Server-rendered HTML would reduce client tooling for a read-only catalog. A separate admin frontend would permit independent releases but duplicate tooling and shared contracts.
 
-**Trade-offs and consequences.** Angular supplies typed components and testing support at the cost of a build/runtime toolchain. Retry issues a fresh synchronous HTTP request; no offline cache or automatic retry exists. The API returns image metadata, but the current frontend does not render product images. Shared storefront/admin tooling is a planned direction: there are no admin routes or guards today.
+**Trade-offs and consequences.** Angular supplies typed components and testing support at the cost of a build/runtime toolchain. Retry issues a fresh HTTP request; no offline cache or automatic retry exists. The API returns image metadata, but the current frontend does not render product images. There are no admin routes, guards or reconciliation screens today. Earlier storefront/admin plans are historical.
 
 **Revisit when.** Search indexing/server rendering becomes a requirement, or administration needs an independent release/security boundary.
 
@@ -82,7 +82,7 @@ This document explains the current single-store catalog and its intended e-comme
 
 ## Decision: Deny writes until identity is implemented
 
-**Context.** A role enum cannot authenticate users or authorize administrative operations.
+**Context.** The current application has no identity implementation; its former role vocabulary is removed.
 
 **Decision and why.** Security allows public catalog GETs, non-sensitive health and dev-only OpenAPI, then denies all remaining routes. Explicit CORS origins and generic Problem Details limit accidental exposure. This provides a safe read-only boundary while identity is unfinished.
 
@@ -90,38 +90,25 @@ This document explains the current single-store catalog and its intended e-comme
 
 **Trade-offs and consequences.** No customer login or actual administrator access is possible. Stateless configuration and disabled CSRF describe the current read API, not a settled future authentication strategy. Cookie-based authentication would require revisiting CSRF; bearer authentication would require token validation and lifecycle rules. Exception details are hidden from clients but logged on the server.
 
-**Planned decision.** One persisted identity will use CUSTOMER/ADMIN roles; public registration must create CUSTOMER only. Internal ADMIN provisioning must hash passwords and avoid migration/seed credentials. Backend authorization remains authoritative even if frontend guards are added.
+**Future review.** Define identity and authorization for reconciliation operations before enabling writes. The former CUSTOMER/ADMIN provisioning direction is historical, not a selected current contract.
 
 **Revisit when.** Any authenticated or mutation endpoint is introduced; select session/token handling before extending the allowlist.
 
 **Evidence:** [SecurityConfiguration](../../backend/src/main/java/com/aurorabakery/configuration/SecurityConfiguration.java), [API/security tests](../../backend/src/test/java/com/aurorabakery/catalog/ProductApiTest.java), [identity roadmap](roadmap.md).
 
-## Decision: Centralize monetary policy before checkout
+## Historical decision: Purchase policy retired
 
-**Context.** Discount stacking and administrator eligibility need one deterministic server policy.
+The earlier purchase-discount/loyalty policy and its tests were removed on 2026-10-09. They are not prepared current functionality. Their former scope is retained in the [historical report](refactor-report.md). Reconciliation needs its own monetary/currency and matching rules; a catalog `BigDecimal` field alone does not implement financial reconciliation.
 
-**Decision and why.** `PurchasePolicy` (retired / removida em 2026-10-09) applies a configurable ADMIN percentage (default 15%), excludes ADMIN from loyalty/marketing, and chooses the greater eligible promotion/loyalty percentage for CUSTOMER. It validates percentage ranges and rounds totals to two decimal places with HALF_UP. Keeping these rules outside controllers makes policy tests independent of HTTP/database setup.
+## Decision: Keep reconciliation and Stripe planned until contracts exist
 
-**Alternatives.** UI calculations duplicate business rules and can be tampered with. Stacked discounts change commercial behavior and complicate explanation of totals.
+**Context and current boundary.** The catalog persists image-path metadata, but there is no upload or checkout. The application has no reconciliation schema, provider adapter, webhook or Stripe SDK. `STRIPE_SECRET_KEY` is a reserved example setting without binding or backend Compose injection.
 
-**Trade-offs and consequences.** Rules are testable now, but caller-supplied roles/eligible percentages are only method inputs, not authenticated facts. No promotion persistence, paid-order counting, marketing delivery or purchase endpoint exists. Future checkout must derive eligibility and totals server-side and snapshot the applied values into orders. Promotional consent must remain separate from transactional communication.
+**Alternatives for study.** A direct provider integration could accept events, but matching/idempotency and authoritative records would still need definition. An adapter boundary could isolate provider details; it has not been implemented or selected as a finished contract. A durable outbox may be appropriate if future reliable delivery requires it.
 
-**Revisit when.** Promotion precedence, refunds, loyalty reversals or per-item rounding become requirements.
+**Trade-offs and consequences.** Deferring integration avoids a misleading fake payment/reconciliation flow, while leaving the new product unfinished. Define inputs, money/currency, authorization, signed events and replay semantics before claiming functionality. Historical commerce uploads and loyalty plans are not commitments for this scope.
 
-
-## Decision: Keep storage and payment integrations planned until their workflows exist
-
-**Context.** The catalog currently stores optional image-path metadata and has no checkout.
-
-**Planned decision and why.** Existing architecture proposes a local filesystem storage adapter behind a port and a Stripe test adapter behind a payment port. Local storage would avoid cloud setup for one instance; Stripe test mode would demonstrate provider-backed payment without real-money processing. Neither port/adapter is implemented today.
-
-**Alternatives.** Object storage supports shared files across instances but adds credentials and operations. Database blobs couple file volume to database backup. A fake frontend payment success is simpler but cannot establish provider-confirmed payment state.
-
-**Trade-offs and consequences.** Before uploads, define size/type validation, generated names and traversal protection. Before Stripe, implement server-owned order totals, signature verification and idempotent webhooks. A redirect to a success screen must not establish PAID state. Durable asynchronous delivery/outbox is a future reliability decision, not a current component.
-
-**Revisit when.** Uploads or checkout are implemented; shared deployments require shared/object storage, and payment retries require explicit idempotency and recovery rules.
-
-**Evidence:** [planned boundaries](architecture.md), [roadmap](roadmap.md), [dependency list](../../backend/pom.xml).
+**Evidence:** [current scope](architecture.md), [roadmap](roadmap.md), [manifest](../../backend/pom.xml), [Compose](../../docker-compose.yml).
 
 ## Decision: Docker for local reproducibility and layered verification
 
@@ -131,9 +118,9 @@ This document explains the current single-store catalog and its intended e-comme
 
 **Alternatives.** Host-only setup removes containers but requires matching toolchains; production orchestration/reverse proxies introduce concerns this local environment does not solve.
 
-**Trade-offs and consequences.** Database startup automatically runs migrations; optional dev seed inserts fictional products, so launching against existing data is a write operation. Seed SQL is separate from migrations and idempotent. Health/readiness includes database connectivity but is not full production observability. Persistent volumes survive ordinary shutdown.
+**Trade-offs and consequences.** Database startup automatically runs migrations; the retired seed flag causes startup failure if enabled. Launching against existing data can still write migration metadata/schema; the development override disables Flyway for initialized databases. Health/readiness includes database connectivity but is not full production observability. Persistent volumes survive ordinary shutdown.
 
-**Testing choice.** MockMvc with a mocked service checks HTTP/security contracts; direct policy tests check monetary rules; opt-in Testcontainers PostgreSQL tests exercise actual migrations, constraints, query behavior and repeatable seed. Angular HTTP fakes check request/UI states. Fakes do not prove database behavior; real database tests cost Docker startup and resources. No checkout/payment tests are claimed.
+**Testing choice.** MockMvc with a mocked service checks HTTP/security contracts; seed-guard tests check rejection of the retired flag; opt-in Testcontainers PostgreSQL tests exercise actual migrations, constraints, query behavior and hidden-row preservation. Angular HTTP fakes check request/UI states. Fakes do not prove database behavior; real database tests cost Docker startup and resources. No checkout/payment tests are claimed.
 
 **Revisit when.** Production hosting, deployment automation or failure recovery is required. Keep test database configuration isolated from development data.
 

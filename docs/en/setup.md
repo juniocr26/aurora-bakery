@@ -26,4 +26,4 @@ docker compose stop
 [Testing](testing.md).
 
 
-[Host-persisted development dependencies and recovery](docker-development-setup.md). Base startup runs migrations and optional seed; use the existing development override to disable both when preserving an initialized database. Never run database-writing tests against application data.
+[Host-persisted development dependencies and recovery](docker-development-setup.md). Base startup runs migrations; the retired seed flag must remain false. Use the existing development override to disable Flyway when preserving an initialized database. Never run database-writing tests against application data.

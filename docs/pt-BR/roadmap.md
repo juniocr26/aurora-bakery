@@ -1,25 +1,25 @@
 # Escopo e estado da implementação
 
-> Escopo histórico de comércio. Payment Reconciliation Lab remove a política de compra e o seed de catálogo. Reconciliação e Stripe seguem planejados; infraestrutura atual e transição em [Docker](docker.md).
-
-
 [English](../en/roadmap.md) | [Português](roadmap.md)
 
-## Concluído na reestruturação
+## Base atual
 
-Identidade de produto de uma única padaria, migração/API de leitura do catálogo, catálogo Angular, disponibilidade/destaques, política independente de preço/consentimento, testes de catálogo/segurança/pricing, Docker de desenvolvimento simplificado e documentação.
+Identidade de infraestrutura Payment Reconciliation Lab configurada. Spring Boot, Angular, PostgreSQL, migrações Flyway preservadas, segurança que nega por padrão e catálogo legado somente leitura permanecem. Política de compra/consentimento e seed foram removidos; resultados antigos pertencem ao [relatório histórico](refactor-report.md). Testes presentes estão em [testes](testing.md).
 
-## Incrementos futuros necessários
+## Direção futura
 
-1. Identidade compartilhada persistida, cadastro/autenticação CUSTOMER seguros, telefone opcional, preferências de comunicação, provisionamento interno ADMIN e autorização por papel no backend.
-2. Mutações administrativas do catálogo, porta de storage local segura e transições de produtos; rotas administrativas lazy na mesma aplicação Angular.
-3. Regras persistidas de promoção por datas e fidelidade configurável, gestão administrativa e testes de serviço.
-4. Carrinho/checkout, snapshots históricos de pedidos com preços calculados pelo servidor e transições validadas.
-5. Adaptador Stripe de teste, webhooks idempotentes com assinatura verificada, progressão de fidelidade por pedidos pagos e notificações transacionais.
-6. Histórico de pedidos, interface de fidelidade, enforcement de consentimento e operações de pedidos autorizadas.
+Reconciliação de pagamentos e integração Stripe de teste não estão implementadas. Não há schema de reconciliação, matching, adaptador de importação/provedor, webhook, ciclo de divergências ou UI de revisão. O roadmap anterior de identidade/checkout/fidelidade da padaria é histórico, sem estabelecer requisitos da nova direção.
 
-Esses fluxos não existiam no repositório original, que continha um diretório somente para leitura. Exigem implementação nova, não apenas remoção de tenant. Não são apresentados como implementados. Testes ADMIN exercitam somente a política; ainda não há compras reais ADMIN. Não se afirma haver testes de autenticação, fidelidade por pagamento, Stripe ou endpoints administrativos. A reestruturação estabelece a base reutilizável para evolução incremental.
+Ordem sugerida de pré-requisitos para projeto/estudo, não marcos de release aprovados nem trabalho concluído:
 
-## Adiado intencionalmente
+1. Definir registros de origem, precisão monetária/moeda, correspondência e divergências.
+2. Definir acesso, persistência e histórico imutável antes de expor escritas.
+3. Implementar fixtures determinísticas isoladas e testes antes do provedor.
+4. Definir adaptador Stripe de teste, assinaturas, idempotência e replay/recuperação.
+5. Introduzir UI de revisão e verificações de falhas após os contratos de backend.
 
-Agendamento automático de DISCONTINUED para ARCHIVED (idade configurável), object storage, WhatsApp, SSO, hospedagem frontend de produção e entrega confiável em background. Serviços extras não se justificam hoje. Folha, RH, ERP, contabilidade, isolamento de tenants, onboarding de comerciantes e franquias ficam fora do escopo atual.
+São questões razoáveis para projeto, não evidência de alternativas avaliadas/selecionadas no desenvolvimento. Nenhum tópico é marcado estudado ou concluído. Preserve dados ao substituir superfícies legadas em mudanças separadas.
+
+## Infraestrutura adiada
+
+Não há necessidade atual de broker, cache, worker distribuído ou object storage em fluxo implementado de reconciliação. Introduza-os para requisitos explícitos de entrega, latência, retenção ou implantação. Desenvolvimento não equivale a produção.

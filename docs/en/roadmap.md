@@ -1,25 +1,25 @@
 # Scope and implementation status
 
-> Historical commerce scope. Payment Reconciliation Lab retires the purchase policy and catalog seed. Reconciliation and Stripe remain planned; current infrastructure and transition instructions are in [Docker](docker.md).
-
-
 [English](roadmap.md) | [Português](../pt-BR/roadmap.md)
 
-## Completed in this restructuring
+## Current foundation
 
-Single-bakery identity, catalog migration/read API, Angular catalog, availability and featured visibility, independent backend pricing/consent policy, meaningful catalog/security/pricing tests, simplified development Docker and current English documentation.
+The Payment Reconciliation Lab infrastructure identity is configured. Spring Boot, Angular, PostgreSQL, preserved Flyway migrations, deny-by-default security and the legacy read-only catalog remain. Catalog purchase/consent policy and seed were retired; their old results belong to the [historical report](refactor-report.md). Current checked-in tests are described in [testing](testing.md).
 
-## Required future product increments
+## Future direction
 
-1. Shared persisted identity, secure CUSTOMER registration/authentication, optional phone and communication preferences, controlled internal ADMIN provisioning and backend role authorization.
-2. Administrative catalog mutations, safe local image storage port and product lifecycle transitions; lazy administrative routes in the same Angular app.
-3. Persisted date-based product promotion rules and configurable loyalty rules, administrative management and service tests.
-4. Cart/checkout, server-priced historical order snapshots and validated state transitions.
-5. Stripe test adapter, signature-verified idempotent webhooks, paid-order loyalty progress and transactional notifications.
-6. Customer order history, loyalty UI, marketing opt-in enforcement and authorized order operations.
+Payment reconciliation and Stripe test integration remain unimplemented. There is no reconciliation schema, matching algorithm, import/provider adapter, webhook, discrepancy lifecycle or review UI. The previous bakery identity/checkout/loyalty roadmap is historical and does not establish requirements for this new direction.
 
-These were absent in the original repository, which contained only a read-only directory. They require new workflows, not simply removal of tenant code. They are not claimed as implemented. ADMIN discount tests exercise the policy only; there are no real admin purchases yet. No authentication, paid-order loyalty, Stripe or admin endpoint tests are claimed. This refactor establishes the reusable foundation requested by the incremental implementation strategy.
+Suggested prerequisite order for design and study, not approved release milestones or completed work:
 
-## Intentionally deferred
+1. Define source records, monetary precision/currency, matching criteria and discrepancy semantics.
+2. Define ownership/access rules, persistence and immutable audit history before exposing writes.
+3. Implement isolated deterministic reconciliation fixtures and tests before provider integration.
+4. Define Stripe test adapter, signed event handling, idempotency and replay/recovery requirements.
+5. Introduce review UI and operational failure checks only after the backend contracts exist.
 
-Automatic discontinued-to-archived scheduling (configurable age), object storage, WhatsApp, SSO, production frontend hosting and reliable background delivery. No extra services are justified today. Payroll, HR, ERP, accounting, tenant isolation, merchant onboarding and franchises are permanently outside the current scope.
+These are reasonable next design questions, not evidence that alternatives were evaluated or selected during development. No topics are marked studied or complete. Preserve existing data while replacing legacy domain surfaces through separately reviewed changes.
+
+## Deferred infrastructure
+
+No broker, cache, distributed worker or object storage is currently required by an implemented reconciliation workflow. Introduce them only for explicit delivery, latency, retention or deployment requirements. The development environment is not a production deployment claim.

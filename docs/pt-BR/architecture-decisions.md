@@ -2,19 +2,19 @@
 
 [English](../en/architecture-decisions.md) | [Português](architecture-decisions.md)
 
-Este documento explica o catálogo atual de uma única padaria e sua evolução pretendida para e-commerce. Afirmações sobre implementação vêm do código, migrações, configuração e testes. Quando não há intenção registrada, o raciocínio avalia a arquitetura atual, sem presumir motivação histórica. Alternativas são opções de revisão, não prova de uma avaliação anterior.
+Este documento explica o catálogo legado atual e a transição para reconciliação de pagamentos. Afirmações sobre implementação vêm do código, migrações, configuração e testes. Quando não há intenção registrada, o raciocínio avalia a arquitetura atual, sem presumir motivação histórica. Alternativas são opções de revisão, não prova de uma avaliação anterior.
 
 ## Estado da implementação
 
-- **Implementado:** catálogo Spring Boot, schema PostgreSQL, storefront Angular, segurança HTTP que nega por padrão, Docker de desenvolvimento e testes de catálogo/pricing.
-- **Projetado / preparado arquiteturalmente:** vocabulário CUSTOMER/ADMIN e política de compra executável. Isso não equivale a identidade persistida, fidelidade ou checkout.
-- **Planejado / trabalho futuro:** login, provisionamento ADMIN controlado, escritas administrativas, pedidos, uploads, promoções, fidelidade por pedidos pagos, Stripe de teste e notificações. Veja o [roadmap](roadmap.md).
+- **Implementado:** catálogo Spring Boot, schema PostgreSQL, storefront Angular, segurança HTTP que nega por padrão, Docker de desenvolvimento e testes de catálogo/segurança e rejeição do seed removido.
+- **Removido:** vocabulário CUSTOMER/ADMIN, política de compra e seed do catálogo. Decisões anteriores de comércio ficam no relatório histórico.
+- **Planejado / trabalho futuro:** reconciliação e Stripe de teste; regras de domínio e acesso ainda precisam ser definidas. Veja o [roadmap](roadmap.md).
 
-## Decisão: Uma padaria em um monólito modular
+## Decisão: Manter monólito modular durante a transição de domínio
 
-**Contexto.** O produto explora uma vitrine de padaria, não onboarding de comerciantes ou gestão de franquias.
+**Contexto.** O código mantém uma vitrine legada durante a transição; nenhum fluxo de reconciliação está implementado.
 
-**Decisão e justificativa.** Uma aplicação Spring Boot contém catálogo, vocabulário de identidade e pricing. Produtos não têm propriedade por tenant. Consultas e transações futuras de pedidos ficam na mesma fronteira de aplicação/banco; microsserviços adicionariam falhas de rede e coordenação antes de haver fluxos independentes para implantar.
+**Decisão e justificativa.** Uma aplicação Spring Boot mantém catálogo e configuração. Produtos não têm propriedade por tenant. Consultas atuais ficam na mesma fronteira de aplicação/banco; microsserviços adicionariam falhas de rede e coordenação antes de haver fluxos independentes para implantar.
 
 **Alternativas.** SaaS multi-tenant exigiria chaves, autorização e testes de isolamento por tenant. Serviços independentes de catálogo/pedidos exigiriam contratos e consistência entre serviços.
 
@@ -28,11 +28,11 @@ Este documento explica o catálogo atual de uma única padaria e sua evolução 
 
 **Contexto.** Dados do catálogo e regras monetárias futuras precisam de contratos explícitos e comportamento testável no servidor.
 
-**Decisão e justificativa.** Records Java expressam DTOs, enums restringem disponibilidade/papéis e `BigDecimal` torna arredondamento explícito. MVC, injeção de dependências, Security, JPA, Flyway e Actuator integram HTTP, persistência e operação. O benefício atual aparece no controller fino e serviço transacional, sem alegação de desempenho medido ou motivação original da linguagem.
+**Decisão e justificativa.** Records Java expressam DTOs, enums restringem disponibilidade e `BigDecimal` representa preços decimais do catálogo. MVC, injeção de dependências, Security, JPA, Flyway e Actuator integram HTTP, persistência e operação. O benefício atual aparece no controller fino e serviço transacional, sem alegação de desempenho medido ou motivação original da linguagem.
 
 **Alternativas.** Python/FastAPI ou Go poderiam atender o catálogo com outra integração de persistência/segurança. Spring JDBC tornaria SQL mais explícito que JPA.
 
-**Trade-offs e consequências.** Configuração de framework e Java 25 são necessários mesmo para uma API pequena. Anotações ORM acoplam Product à persistência; anotações Spring aparecem na política de preços. Fronteiras lógicas existem, mas não são independentes do framework. DTOs explícitos evitam expor entidades e permitem evoluir o contrato público separadamente.
+**Trade-offs e consequências.** Configuração de framework e Java 25 são necessários mesmo para uma API pequena. Anotações ORM acoplam Product à persistência. Fronteiras lógicas existem, mas não são independentes do framework. DTOs explícitos evitam expor entidades e permitem evoluir o contrato público separadamente.
 
 **Reavaliar quando.** Custo do framework dificultar implantação ou consultas justificarem SQL explícito. Primeiro medir a carga real.
 
@@ -74,7 +74,7 @@ Este documento explica o catálogo atual de uma única padaria e sua evolução 
 
 **Alternativas.** HTML no servidor reduz ferramentas cliente num catálogo de leitura. Admin separado permite releases independentes mas duplica ferramentas/contratos.
 
-**Trade-offs e consequências.** Angular fornece componentes tipados/testes ao custo de toolchain. Retry faz nova requisição HTTP síncrona; não há cache offline ou retry automático. API retorna metadados de imagem, mas frontend não renderiza imagens. Compartilhar ferramentas storefront/admin é direção planejada; não há rotas/guards admin atuais.
+**Trade-offs e consequências.** Angular fornece componentes tipados/testes ao custo de toolchain. Retry faz nova requisição HTTP; não há cache offline ou retry automático. API retorna metadados de imagem, mas frontend não renderiza imagens. Não há rotas/guards admin nem telas de reconciliação; os planos anteriores de storefront/admin são históricos.
 
 **Reavaliar quando.** Indexação/renderização no servidor for necessária ou admin exigir fronteira independente de release/segurança.
 
@@ -82,7 +82,7 @@ Este documento explica o catálogo atual de uma única padaria e sua evolução 
 
 ## Decisão: Negar escritas até implementar identidade
 
-**Contexto.** Enum de papel não autentica usuários nem autoriza administração.
+**Contexto.** Não há implementação atual de identidade; o antigo vocabulário de papéis foi removido.
 
 **Decisão e justificativa.** Segurança permite GET de catálogo, saúde não sensível e OpenAPI dev; nega o restante. Origens CORS explícitas e Problem Details genéricos limitam exposição acidental enquanto identidade está incompleta.
 
@@ -90,38 +90,25 @@ Este documento explica o catálogo atual de uma única padaria e sua evolução 
 
 **Trade-offs e consequências.** Login e acesso ADMIN reais não existem. Stateless e CSRF desabilitado descrevem a API de leitura, não uma estratégia futura definida. Cookies exigem rever CSRF; bearer exige validação/ciclo de tokens. Exceções são ocultadas do cliente mas registradas no servidor.
 
-**Decisão planejada.** Identidade única persistida CUSTOMER/ADMIN; cadastro público cria apenas CUSTOMER. Provisionamento interno ADMIN deve gerar hash sem credenciais em migrações/seeds. Backend segue autoritativo mesmo com guards frontend.
+**Revisão futura.** Defina identidade/autorização para operações de reconciliação antes de habilitar escritas. Provisionamento CUSTOMER/ADMIN anterior é histórico, não contrato atual selecionado.
 
 **Reavaliar quando.** Introduzir qualquer endpoint autenticado/de mutação; escolher sessão/tokens antes de ampliar allowlist.
 
 **Evidências:** [SecurityConfiguration](../../backend/src/main/java/com/aurorabakery/configuration/SecurityConfiguration.java), [testes API](../../backend/src/test/java/com/aurorabakery/catalog/ProductApiTest.java), [roadmap](roadmap.md).
 
-## Decisão: Centralizar política monetária antes do checkout
+## Decisão histórica: Política de compra removida
 
-**Contexto.** Acúmulo de descontos e elegibilidade ADMIN precisam de política determinística única no servidor.
+Política anterior de descontos/fidelidade e testes removidos em 2026-10-09. Não são preparação funcional atual; seu escopo fica no [relatório histórico](refactor-report.md). Reconciliação exige regras próprias de moeda/valores/matching; `BigDecimal` no catálogo não implementa reconciliação financeira.
 
-**Decisão e justificativa.** `PurchasePolicy` (retired / removida em 2026-10-09) aplica porcentagem ADMIN configurável (15% padrão), exclui ADMIN de fidelidade/marketing e escolhe o maior desconto elegível de promoção/fidelidade para CUSTOMER. Valida porcentagens e arredonda total a duas casas com HALF_UP. Fora de controllers, regras são testáveis sem HTTP/banco.
+## Decisão: Manter reconciliação e Stripe planejados até definir contratos
 
-**Alternativas.** Cálculo na UI duplica regras e permite adulteração. Acumular descontos muda comportamento comercial e complica explicar totais.
+**Contexto e fronteira atual.** O catálogo guarda metadado de imagem, sem upload/checkout. Não há schema de reconciliação, adaptador, webhook ou SDK Stripe. `STRIPE_SECRET_KEY` é configuração reservada no exemplo, sem binding ou passagem ao backend pelo Compose.
 
-**Trade-offs e consequências.** Papéis/porcentagens recebidos pelo método não são fatos autenticados. Não há persistência de promoções, contagem de pedidos pagos, entrega de marketing ou endpoint de compra. Checkout futuro deve derivar elegibilidade/totais no servidor e salvar snapshots. Consentimento promocional deve ser separado de comunicação transacional.
+**Alternativas de estudo.** Integração direta poderia receber eventos, mas matching/idempotência e registros autoritativos ainda precisariam de definição. Uma porta isolaria detalhes do provedor; não está implementada nem selecionada como contrato concluído. Outbox pode servir a entrega confiável futura.
 
-**Reavaliar quando.** Precedência de promoções, reembolsos, reversão de fidelidade ou arredondamento por item forem requisitos.
+**Trade-offs e consequências.** Adiar evita fluxo fake enganoso, mas deixa o produto novo incompleto. Defina entradas, valores/moeda, autorização, eventos assinados e replay antes de alegar funcionalidade. Uploads/fidelidade de comércio são históricos, não compromissos deste escopo.
 
-
-## Decisão: Manter storage e pagamento planejados até existir o fluxo
-
-**Contexto.** Catálogo armazena metadados opcionais de caminho de imagem e não tem checkout.
-
-**Decisão planejada e justificativa.** Arquitetura propõe adaptador filesystem local atrás de uma porta e adaptador Stripe de teste atrás de uma porta de pagamento. Local evita cloud numa instância; Stripe test demonstra confirmação do provedor sem dinheiro real. Nenhuma porta/adaptador existe hoje.
-
-**Alternativas.** Object storage compartilha arquivos entre instâncias mas adiciona credenciais/operação. Blobs no banco acoplam volume de arquivos a backup. Sucesso fake na UI é simples mas não confirma pagamento.
-
-**Trade-offs e consequências.** Antes de uploads, definir tamanho/tipo, nomes gerados e proteção traversal. Antes de Stripe, implementar totais server-side, assinatura e idempotência de webhooks. Redirect de sucesso não estabelece PAID. Outbox/entrega assíncrona durável é decisão futura, não componente atual.
-
-**Reavaliar quando.** Uploads/checkout forem implementados; deploy compartilhado exige storage compartilhado/object storage e retries de pagamento exigem recuperação/idempotência.
-
-**Evidências:** [fronteiras planejadas](architecture.md), [roadmap](roadmap.md), [dependências](../../backend/pom.xml).
+**Evidência:** [escopo](architecture.md), [roadmap](roadmap.md), [manifesto](../../backend/pom.xml), [Compose](../../docker-compose.yml).
 
 ## Decisão: Docker para reprodutibilidade e verificação em camadas
 
@@ -131,9 +118,9 @@ Este documento explica o catálogo atual de uma única padaria e sua evolução 
 
 **Alternativas.** Setup no host dispensa containers mas exige ferramentas compatíveis; orquestração/proxy de produção resolve outras necessidades.
 
-**Trade-offs e consequências.** Startup executa migrações automaticamente; seed dev opcional insere produtos fictícios. Iniciar sobre dados existentes é operação de escrita. Seed separado/idempotente não substitui migrações. Readiness inclui banco, sem observabilidade completa. Volume persiste após desligamento comum.
+**Trade-offs e consequências.** Startup executa migrações automaticamente; a flag do seed removido falha o startup quando habilitada. Iniciar sobre dados existentes ainda pode escrever schema/metadados Flyway; o override dev desabilita migrações e exige banco inicializado. Readiness inclui banco, sem observabilidade completa. Volume persiste após desligamento comum.
 
-**Escolha de testes.** MockMvc com serviço fake valida HTTP/segurança; política direta valida regras; Testcontainers PostgreSQL opt-in valida migrações, constraints, consultas e seed. Fakes HTTP Angular validam estados UI. Fakes não provam banco; integração real custa startup/recursos Docker. Não há testes de checkout/pagamento.
+**Escolha de testes.** MockMvc com serviço fake valida HTTP/segurança; testes de seed validam rejeição da flag removida; Testcontainers PostgreSQL opt-in valida migrações, constraints, consultas e preservação de linhas ocultas. Fakes HTTP Angular validam estados UI. Fakes não provam banco; integração real custa startup/recursos Docker. Não há testes de checkout/pagamento.
 
 **Reavaliar quando.** Hosting de produção, automação de deploy ou recuperação forem necessários. Manter banco de testes isolado de dados dev.
 
