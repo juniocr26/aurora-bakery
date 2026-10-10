@@ -1,6 +1,6 @@
 # Development Docker environment
 
-[English](docker.md) | [Português](../pt-BR/docker.md)
+[English](runtime.md) | [Português](../../pt-BR/docker/runtime.md)
 
 ## Identity and configuration
 
@@ -74,4 +74,4 @@ docker start aurora-bakery-frontend-1
 
 Compare preserved rows and migration history with the baseline, not merely container health. Base frontend depends on backend health inherited from the runtime Dockerfile. That healthcheck requests `/actuator/health/readiness`; readiness includes DB connectivity. Base DB and frontend also have healthchecks. No duplicate backend Compose healthcheck is needed. The development override deliberately uses `service_started` and disables the backend healthcheck.
 
-For fresh environments use [setup](setup.md) without the external-volume override, after setting a local password. For dependency recovery see [development setup](docker-development-setup.md). Current test evidence is recorded in [verification](verification.md); previous audit results are historical.
+For fresh environments use [setup](../guides/setup.md) without the external-volume override, after setting a local password. For dependency recovery see [development setup](development.md). Current test evidence is recorded in [verification](../testing/verification.md); previous audit results are historical.

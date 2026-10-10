@@ -1,6 +1,6 @@
 # Ambiente Docker de desenvolvimento
 
-[English](../en/docker.md) | [Português](docker.md)
+[English](../../en/docker/runtime.md) | [Português](runtime.md)
 
 ## Identidade e configuração
 
@@ -18,6 +18,6 @@ O `.env` local reutiliza esse volume e mantém banco, usuário e senha existente
 
 `COMPOSE_PROJECT_NAME` não estava no `.env` ou shell inspecionados. Flags `-p` só aparecem no procedimento para parar explicitamente o projeto antigo. Variáveis exportadas e flags podem sobrepor `name`; `COMPOSE_FILE` também altera arquivos carregados. Confira seu shell/automação. A troca de projeto não renomeia containers antigos automaticamente.
 
-Siga os [comandos completos de inspeção, backup, transição, verificação e rollback](../en/docker.md), partindo da raiz deste repositório. Antes da troca: valide com `config --quiet`, construa imagens, pare frontend/backend antigos, faça backup lógico com `pg_dump`, depois pare o banco antigo. Inicie com `docker compose -f docker-compose.yml -f compose.existing-db.yaml up -d --wait --wait-timeout 180`. Compare mount, registros e histórico Flyway; teste readiness e `/api/v1/products` pelo frontend. Para rollback, pare primeiro os três serviços novos e só então reinicie containers antigos, aguardando saúde de cada dependência.
+Siga os [comandos completos de inspeção, backup, transição, verificação e rollback](../../en/docker/runtime.md), partindo da raiz deste repositório. Antes da troca: valide com `config --quiet`, construa imagens, pare frontend/backend antigos, faça backup lógico com `pg_dump`, depois pare o banco antigo. Inicie com `docker compose -f docker-compose.yml -f compose.existing-db.yaml up -d --wait --wait-timeout 180`. Compare mount, registros e histórico Flyway; teste readiness e `/api/v1/products` pelo frontend. Para rollback, pare primeiro os três serviços novos e só então reinicie containers antigos, aguardando saúde de cada dependência.
 
-Instalações novas seguem [setup](setup.md), sem override externo. Dependências: [guia de desenvolvimento](docker-development-setup.md). Evidência atual: [verificação](verification.md); resultados anteriores são históricos.
+Instalações novas seguem [setup](../guides/setup.md), sem override externo. Dependências: [guia de desenvolvimento](development.md). Evidência atual: [verificação](../testing/verification.md); resultados anteriores são históricos.

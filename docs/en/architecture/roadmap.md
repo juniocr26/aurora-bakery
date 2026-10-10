@@ -1,10 +1,10 @@
 # Scope and implementation status
 
-[English](roadmap.md) | [Português](../pt-BR/roadmap.md)
+[English](roadmap.md) | [Português](../../pt-BR/architecture/roadmap.md)
 
 ## Current foundation
 
-The Payment Reconciliation Lab infrastructure identity is configured. Spring Boot, Angular, PostgreSQL, preserved Flyway migrations, deny-by-default security and the legacy read-only catalog remain. Catalog purchase/consent policy and seed were retired; their old results belong to the [historical report](refactor-report.md). Current checked-in tests are described in [testing](testing.md).
+The Payment Reconciliation Lab infrastructure identity is configured. Spring Boot, Angular, PostgreSQL, preserved Flyway migrations, deny-by-default security and the legacy read-only catalog remain. Catalog purchase/consent policy and seed were retired; their old results belong to the [historical report](../operations/historical-refactor-report.md). Current checked-in tests are described in [testing](../testing/strategy.md).
 
 ## Future direction
 

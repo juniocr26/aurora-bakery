@@ -1,9 +1,9 @@
 # Relatório da reestruturação Aurora Bakery
 
-> Escopo histórico de comércio. Payment Reconciliation Lab remove a política de compra e o seed de catálogo. Reconciliação e Stripe seguem planejados; infraestrutura atual e transição em [Docker](docker.md).
+> Escopo histórico de comércio. Payment Reconciliation Lab remove a política de compra e o seed de catálogo. Reconciliação e Stripe seguem planejados; infraestrutura atual e transição em [Docker](../docker/runtime.md).
 
 
-[English](../en/refactor-report.md) | [Português](refactor-report.md)
+[English](../../en/operations/historical-refactor-report.md) | [Português](historical-refactor-report.md)
 
 Este relatório descreve a reestruturação anterior. Seus resultados de runtime são históricos e não representam novas execuções da revisão documental.
 
@@ -52,7 +52,7 @@ docker compose run --rm --no-deps frontend npm run build
 docker compose run --rm --no-deps frontend npm test
 ```
 
-Backend executou `./mvnw -B -ntp verify -Pintegration` na imagem build-stage, com socket, override host e fonte final somente leitura. SQL e Node fetch conferiram migrações, fixtures, readiness, frontend e igualdade API/proxy. Veja [verificação](verification.md) e [testes](testing.md).
+Backend executou `./mvnw -B -ntp verify -Pintegration` na imagem build-stage, com socket, override host e fonte final somente leitura. SQL e Node fetch conferiram migrações, fixtures, readiness, frontend e igualdade API/proxy. Veja [verificação](../testing/verification.md) e [testes](../testing/strategy.md).
 
 **Registro histórico:** a stack completa iniciou com sucesso naquela verificação. Não é declaração do estado atual dos containers. Três serviços passaram saúde; logs sem erro de aplicação. Avisos normais Angular/toolchain e restart de inicialização PostgreSQL permaneceram. Nenhuma configuração ativa usa identidade antiga; V1 preserva schema histórico. Logs de modernização/artefatos ignorados não são configuração ativa.
 
@@ -68,4 +68,4 @@ Adiados: SSO, WhatsApp, object storage, arquivamento automático configurável e
 
 ## Fronteira atual — 2026-10-09
 
-Contagens, regras de comércio, inserção de fixtures e próximo incremento acima descrevem a reestruturação anterior. Código atual removeu pacotes de identidade/preços, testes da política e SQL de seed; habilitar a flag removida falha o startup. Reconciliação/Stripe seguem planejados. Consulte [arquitetura atual](architecture.md), [roadmap](roadmap.md) e [inventário de testes](testing.md). Resultados históricos não foram reexecutados nesta auditoria.
+Contagens, regras de comércio, inserção de fixtures e próximo incremento acima descrevem a reestruturação anterior. Código atual removeu pacotes de identidade/preços, testes da política e SQL de seed; habilitar a flag removida falha o startup. Reconciliação/Stripe seguem planejados. Consulte [arquitetura atual](../architecture/overview.md), [roadmap](../architecture/roadmap.md) e [inventário de testes](../testing/strategy.md). Resultados históricos não foram reexecutados nesta auditoria.

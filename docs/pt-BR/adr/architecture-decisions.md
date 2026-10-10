@@ -1,6 +1,6 @@
 # Decisões de Arquitetura e Trade-offs
 
-[English](../en/architecture-decisions.md) | [Português](architecture-decisions.md)
+[English](../../en/adr/architecture-decisions.md) | [Português](architecture-decisions.md)
 
 Este documento explica o catálogo legado atual e a transição para reconciliação de pagamentos. Afirmações sobre implementação vêm do código, migrações, configuração e testes. Quando não há intenção registrada, o raciocínio avalia a arquitetura atual, sem presumir motivação histórica. Alternativas são opções de revisão, não prova de uma avaliação anterior.
 
@@ -8,7 +8,7 @@ Este documento explica o catálogo legado atual e a transição para reconcilia�
 
 - **Implementado:** catálogo Spring Boot, schema PostgreSQL, storefront Angular, segurança HTTP que nega por padrão, Docker de desenvolvimento e testes de catálogo/segurança e rejeição do seed removido.
 - **Removido:** vocabulário CUSTOMER/ADMIN, política de compra e seed do catálogo. Decisões anteriores de comércio ficam no relatório histórico.
-- **Planejado / trabalho futuro:** reconciliação e Stripe de teste; regras de domínio e acesso ainda precisam ser definidas. Veja o [roadmap](roadmap.md).
+- **Planejado / trabalho futuro:** reconciliação e Stripe de teste; regras de domínio e acesso ainda precisam ser definidas. Veja o [roadmap](../architecture/roadmap.md).
 
 ## Decisão: Manter monólito modular durante a transição de domínio
 
@@ -22,7 +22,7 @@ Este documento explica o catálogo legado atual e a transição para reconcilia�
 
 **Reavaliar quando.** Módulos com responsáveis independentes precisarem de releases separados ou carga medida justificar escala independente. Multi-loja exige mudança explícita de escopo e isolamento de dados.
 
-**Evidências:** [CatalogService](../../backend/src/main/java/com/aurorabakery/catalog/application/CatalogService.java), [schema V2](../../backend/src/main/resources/db/migration/V2__single_bakery_catalog.sql), [visão de domínio](architecture.md).
+**Evidências:** [CatalogService](../../../backend/src/main/java/com/aurorabakery/catalog/application/CatalogService.java), [schema V2](../../../backend/src/main/resources/db/migration/V2__single_bakery_catalog.sql), [visão de domínio](../architecture/overview.md).
 
 ## Decisão: Java e Spring Boot para fronteiras tipadas
 
@@ -36,7 +36,7 @@ Este documento explica o catálogo legado atual e a transição para reconcilia�
 
 **Reavaliar quando.** Custo do framework dificultar implantação ou consultas justificarem SQL explícito. Primeiro medir a carga real.
 
-**Evidências:** [pom.xml](../../backend/pom.xml), [ProductSummary](../../backend/src/main/java/com/aurorabakery/catalog/application/ProductSummary.java).
+**Evidências:** [pom.xml](../../../backend/pom.xml), [ProductSummary](../../../backend/src/main/java/com/aurorabakery/catalog/application/ProductSummary.java).
 
 ## Decisão: PostgreSQL com evolução versionada de schema
 
@@ -50,7 +50,7 @@ Este documento explica o catálogo legado atual e a transição para reconcilia�
 
 **Reavaliar quando.** Tamanho justificar paginação/análise de índices ou política de retenção aprovada permitir remover legado. Pedidos precisam de regras de transação/snapshot antes da implementação.
 
-**Evidências:** [migrações](../../backend/src/main/resources/db/migration), [application.yml](../../backend/src/main/resources/application.yml), [testes PostgreSQL](../../backend/src/test/java/com/aurorabakery/catalog/ProductPostgresIT.java).
+**Evidências:** [migrações](../../../backend/src/main/resources/db/migration), [application.yml](../../../backend/src/main/resources/application.yml), [testes PostgreSQL](../../../backend/src/test/java/com/aurorabakery/catalog/ProductPostgresIT.java).
 
 ## Decisão: Disponibilidade e histórico em vez de inventário
 
@@ -64,7 +64,7 @@ Este documento explica o catálogo legado atual e a transição para reconcilia�
 
 **Reavaliar quando.** Lotes finitos exigirem reservas ou retenção/lifecycle administrativo estiverem definidos.
 
-**Evidências:** [Product](../../backend/src/main/java/com/aurorabakery/catalog/domain/Product.java), [CatalogService](../../backend/src/main/java/com/aurorabakery/catalog/application/CatalogService.java), [ProductPostgresIT](../../backend/src/test/java/com/aurorabakery/catalog/ProductPostgresIT.java).
+**Evidências:** [Product](../../../backend/src/main/java/com/aurorabakery/catalog/domain/Product.java), [CatalogService](../../../backend/src/main/java/com/aurorabakery/catalog/application/CatalogService.java), [ProductPostgresIT](../../../backend/src/test/java/com/aurorabakery/catalog/ProductPostgresIT.java).
 
 ## Decisão: Uma aplicação Angular com estados explícitos
 
@@ -78,7 +78,7 @@ Este documento explica o catálogo legado atual e a transição para reconcilia�
 
 **Reavaliar quando.** Indexação/renderização no servidor for necessária ou admin exigir fronteira independente de release/segurança.
 
-**Evidências:** [UI/testes](../../frontend/src/app/catalog), [rotas](../../frontend/src/main.ts), [proxy](../../frontend/proxy.conf.cjs).
+**Evidências:** [UI/testes](../../../frontend/src/app/catalog), [rotas](../../../frontend/src/main.ts), [proxy](../../../frontend/proxy.conf.cjs).
 
 ## Decisão: Negar escritas até implementar identidade
 
@@ -94,11 +94,11 @@ Este documento explica o catálogo legado atual e a transição para reconcilia�
 
 **Reavaliar quando.** Introduzir qualquer endpoint autenticado/de mutação; escolher sessão/tokens antes de ampliar allowlist.
 
-**Evidências:** [SecurityConfiguration](../../backend/src/main/java/com/aurorabakery/configuration/SecurityConfiguration.java), [testes API](../../backend/src/test/java/com/aurorabakery/catalog/ProductApiTest.java), [roadmap](roadmap.md).
+**Evidências:** [SecurityConfiguration](../../../backend/src/main/java/com/aurorabakery/configuration/SecurityConfiguration.java), [testes API](../../../backend/src/test/java/com/aurorabakery/catalog/ProductApiTest.java), [roadmap](../architecture/roadmap.md).
 
 ## Decisão histórica: Política de compra removida
 
-Política anterior de descontos/fidelidade e testes removidos em 2026-10-09. Não são preparação funcional atual; seu escopo fica no [relatório histórico](refactor-report.md). Reconciliação exige regras próprias de moeda/valores/matching; `BigDecimal` no catálogo não implementa reconciliação financeira.
+Política anterior de descontos/fidelidade e testes removidos em 2026-10-09. Não são preparação funcional atual; seu escopo fica no [relatório histórico](../operations/historical-refactor-report.md). Reconciliação exige regras próprias de moeda/valores/matching; `BigDecimal` no catálogo não implementa reconciliação financeira.
 
 ## Decisão: Manter reconciliação e Stripe planejados até definir contratos
 
@@ -108,7 +108,7 @@ Política anterior de descontos/fidelidade e testes removidos em 2026-10-09. Nã
 
 **Trade-offs e consequências.** Adiar evita fluxo fake enganoso, mas deixa o produto novo incompleto. Defina entradas, valores/moeda, autorização, eventos assinados e replay antes de alegar funcionalidade. Uploads/fidelidade de comércio são históricos, não compromissos deste escopo.
 
-**Evidência:** [escopo](architecture.md), [roadmap](roadmap.md), [manifesto](../../backend/pom.xml), [Compose](../../docker-compose.yml).
+**Evidência:** [escopo](../architecture/overview.md), [roadmap](../architecture/roadmap.md), [manifesto](../../../backend/pom.xml), [Compose](../../../docker-compose.yml).
 
 ## Decisão: Docker para reprodutibilidade e verificação em camadas
 
@@ -124,4 +124,4 @@ Política anterior de descontos/fidelidade e testes removidos em 2026-10-09. Nã
 
 **Reavaliar quando.** Hosting de produção, automação de deploy ou recuperação forem necessários. Manter banco de testes isolado de dados dev.
 
-**Evidências:** [Compose](../../docker-compose.yml), [Docker](docker.md), [testes backend](../../backend/src/test/java/com/aurorabakery), [testes frontend](../../frontend/src/app/catalog/product-list.spec.ts).
+**Evidências:** [Compose](../../../docker-compose.yml), [Docker](../docker/runtime.md), [testes backend](../../../backend/src/test/java/com/aurorabakery), [testes frontend](../../../frontend/src/app/catalog/product-list.spec.ts).

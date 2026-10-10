@@ -13,7 +13,7 @@ docker compose up --build -d --wait --wait-timeout 180
 
 Em um checkout existente, atualize `.env` conforme as variáveis documentadas, sem sobrescrevê-lo. Aplicação: http://localhost:4200/products. API: http://localhost:8080/api/v1/products. Swagger local: http://localhost:8080/swagger-ui/index.html. Readiness: http://localhost:8080/actuator/health/readiness.
 
-Migrações Flyway preservadas; Hibernate valida o schema. Seed de catálogo e política de compra removidos. Mantenha `DEV_SEED_ENABLED=false`; fixtures de reconciliação e Stripe ainda não foram implementados. Antes de iniciar um checkout existente, siga [a transição preservando dados](docker.md).
+Migrações Flyway preservadas; Hibernate valida o schema. Seed de catálogo e política de compra removidos. Mantenha `DEV_SEED_ENABLED=false`; fixtures de reconciliação e Stripe ainda não foram implementados. Antes de iniciar um checkout existente, siga [a transição preservando dados](../docker/runtime.md).
 
 ```sh
 docker compose ps
@@ -23,7 +23,7 @@ docker compose stop
 
 
 
-[Testes](testing.md).
+[Testes](../testing/strategy.md).
 
 
-[Dependências persistidas no host e recuperação](docker-development-setup.md). A inicialização base executa migrações; a flag do seed removido deve permanecer false. Use o override existente para desabilitar Flyway ao preservar um banco inicializado. Nunca execute testes de escrita contra dados da aplicação.
+[Dependências persistidas no host e recuperação](../docker/development.md). A inicialização base executa migrações; a flag do seed removido deve permanecer false. Use o override existente para desabilitar Flyway ao preservar um banco inicializado. Nunca execute testes de escrita contra dados da aplicação.

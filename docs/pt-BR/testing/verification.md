@@ -1,6 +1,6 @@
 # Verificação da reestruturação — 2026-10-05
 
-[English](../en/verification.md) | [Português](verification.md)
+[English](../../en/testing/verification.md) | [Português](verification.md)
 
 Este é o registro da verificação anterior da reestruturação, não da revisão documental atual. Foi usado Docker Desktop com Compose v2 em macOS ARM64. Java 17 do host e ausência de Node foram contornados com imagens Java 25/Node 22 do repositório. Dependências fixadas foram preservadas.
 
@@ -54,10 +54,10 @@ Aprovados: resolução silenciosa de Compose base e overrides; defaults de insta
 
 Runtime: frontend/backend antigos parados antes do backup lógico protegido em `/tmp/payment-reconciliation-lab-backups/before-transition.dump`; listagem do arquivo verificada; banco antigo parado antes de iniciar novo. `up --wait` confirmou os três serviços saudáveis. Mount usa `aurora-bakery_db_data`; fingerprints ordenados de todas as linhas de produtos e histórico Flyway coincidem antes/depois, preservando três produtos e duas migrações. Readiness, HTTP/título Angular e proxy API responderam 200. Containers antigos parados, novos em execução; nenhum volume excluído/prune executado. Backup em `/tmp` é temporário; copie privadamente para armazenamento durável se necessário.
 
-Pendente: suíte Testcontainers não executada. Revisão automática rejeitou montagem do socket Docker por conceder controle amplo do daemon; unidade executada sem socket. Após aprovação explícita, executar comando de integração em [testing](testing.md), sempre com bancos descartáveis, nunca banco da aplicação. Override de desenvolvimento apenas resolvido; rollback e restore documentados, sem execução. Stripe/reconciliação não validados. npm reportou 5 vulnerabilidades (3 high, 2 critical); versões não alteradas nesta transição.
+Pendente: suíte Testcontainers não executada. Revisão automática rejeitou montagem do socket Docker por conceder controle amplo do daemon; unidade executada sem socket. Após aprovação explícita, executar comando de integração em [testing](strategy.md), sempre com bancos descartáveis, nunca banco da aplicação. Override de desenvolvimento apenas resolvido; rollback e restore documentados, sem execução. Stripe/reconciliação não validados. npm reportou 5 vulnerabilidades (3 high, 2 critical); versões não alteradas nesta transição.
 
 ## Auditoria documental estática — 2026-10-09
 
 Arquitetura, decisões, roadmap e setup alinhados ao catálogo de leitura, remoção de pricing/vocabulário de identidade e rejeição da flag de seed. Inventário: 7 métodos unitários/API, 5 PostgreSQL opt-in e 4 Angular; não é novo resultado aprovado. Reconciliação/Stripe planejados, chave reservada sem binding/passagem Compose. Não foram executados Docker, builds, testes, inspeção de banco/volume, migração ou transição/backup. Estado de serviços anterior descreve aquela transição, não estado Docker atual.
 
-Checagens estáticas de links/âncoras, fences, pares de idioma e SHA-256 para alterações somente documentais estão na [revisão de entrevista](../../../tecnical-interview/docs/pt-BR/verification.md). Arquivos reais de ambiente e backups sensíveis não foram lidos/alterados.
+Checagens estáticas de links/âncoras, fences, pares de idioma e SHA-256 para alterações somente documentais estão na [revisão de entrevista](../../../../engineering-library/docs/pt-BR/testing/verification.md). Arquivos reais de ambiente e backups sensíveis não foram lidos/alterados.

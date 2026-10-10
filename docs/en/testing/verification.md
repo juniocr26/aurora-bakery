@@ -1,6 +1,6 @@
 # Refactor verification — 2026-10-05
 
-[English](verification.md) | [Português](../pt-BR/verification.md)
+[English](verification.md) | [Português](../../pt-BR/testing/verification.md)
 
 This records the earlier refactor verification, not a new full-stack run during the documentation review. The verification used Docker Desktop with Compose v2 on macOS ARM64. Host Java 17 and missing host Node were bypassed using the repository Java 25 and Node 22 Docker images. Exact pinned dependencies were retained.
 
@@ -57,10 +57,10 @@ Passed: quiet Compose resolution for base, external-volume and development overr
 
 Runtime: stopped old frontend/backend, created a mode-600 logical backup at `/tmp/payment-reconciliation-lab-backups/before-transition.dump`, verified its archive listing, and stopped the old DB before new startup. `up --wait` passed for all three new services. Mount inspection confirms reuse of `aurora-bakery_db_data`. Ordered row fingerprints for every product and Flyway history row matched before/after; three product records and two migrations remain. Internal backend readiness, Angular HTTP/title and frontend API proxy all returned 200. Old application containers remain stopped; no volume deletion/pruning occurred. New services were running at the end of that earlier transition; their current state was not inspected during this documentation-only audit. Backup is temporary local storage, not a durable backup service; retain it elsewhere privately if needed.
 
-Pending: Testcontainers integration suite was not executed. Automatic approval review rejected mounting the Docker socket into the test container because it grants broad daemon control. Unit tests ran without that mount. After explicit approval, rerun the documented integration command in [testing](testing.md) against disposable Testcontainers databases, never the application DB. Development override was resolved but not started; rollback and backup restoration were documented but not executed. No Stripe or reconciliation runtime checks are claimed. npm installation reported 5 dependency vulnerabilities (3 high, 2 critical); dependency versions were unchanged by this naming transition.
+Pending: Testcontainers integration suite was not executed. Automatic approval review rejected mounting the Docker socket into the test container because it grants broad daemon control. Unit tests ran without that mount. After explicit approval, rerun the documented integration command in [testing](strategy.md) against disposable Testcontainers databases, never the application DB. Development override was resolved but not started; rollback and backup restoration were documented but not executed. No Stripe or reconciliation runtime checks are claimed. npm installation reported 5 dependency vulnerabilities (3 high, 2 critical); dependency versions were unchanged by this naming transition.
 
 ## Static documentation audit — 2026-10-09
 
 Aligned current architecture, decisions, roadmap and setup with the retained read-only catalog, removed pricing/identity vocabulary and rejected seed flag. Source inventory is 7 unit/API methods, 5 opt-in PostgreSQL methods and 4 Angular cases; inventory is not a new passing result. Reconciliation/Stripe remain planned and the reserved key is not bound or injected by Compose. No Docker, builds, tests, database/volume inspection, migrations or transition/backup commands were executed. Earlier service-state statements describe the prior transition, not current Docker state.
 
-Static local-link/anchor, fence, language-pair and documentation-only SHA-256 checks are recorded in the shared [interview review](../../../tecnical-interview/docs/en/verification.md). Runtime environment files and secret-bearing backups were not read or modified.
+Static local-link/anchor, fence, language-pair and documentation-only SHA-256 checks are recorded in the shared [interview review](../../../../engineering-library/docs/en/testing/verification.md). Runtime environment files and secret-bearing backups were not read or modified.

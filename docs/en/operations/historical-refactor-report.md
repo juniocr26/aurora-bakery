@@ -1,9 +1,9 @@
 # Aurora Bakery restructuring report
 
-> Historical commerce scope. Payment Reconciliation Lab retires the purchase policy and catalog seed. Reconciliation and Stripe remain planned; current infrastructure and transition instructions are in [Docker](docker.md).
+> Historical commerce scope. Payment Reconciliation Lab retires the purchase policy and catalog seed. Reconciliation and Stripe remain planned; current infrastructure and transition instructions are in [Docker](../docker/runtime.md).
 
 
-[English](refactor-report.md) | [Português](../pt-BR/refactor-report.md)
+[English](historical-refactor-report.md) | [Português](../../pt-BR/operations/historical-refactor-report.md)
 
 This report describes the earlier restructuring; its runtime results are historical, not new runs during the documentation review.
 
@@ -54,7 +54,7 @@ docker compose run --rm --no-deps frontend npm run build
 docker compose run --rm --no-deps frontend npm test
 ```
 
-Backend verification executed `./mvnw -B -ntp verify -Pintegration` inside the build-stage image with a Docker socket, host override and read-only final source mount. SQL and Node fetch checks verified successful migrations, fixture rows, database readiness, frontend startup and direct/proxied API equality. See [verification](verification.md) and [testing](testing.md) for reproducible test commands.
+Backend verification executed `./mvnw -B -ntp verify -Pintegration` inside the build-stage image with a Docker socket, host override and read-only final source mount. SQL and Node fetch checks verified successful migrations, fixture rows, database readiness, frontend startup and direct/proxied API equality. See [verification](../testing/verification.md) and [testing](../testing/strategy.md) for reproducible test commands.
 
 **Historical refactor verification:** the complete development stack started successfully during that verification. This is not a statement of current container state. All three services passed health checks. Logs show no application startup/runtime errors. Standard toolchain/Angular development warnings and PostgreSQL's normal initialization restart remain. No required service/configuration references the old project identity. V1 and its historical schema terminology are retained for migration integrity. Ignored historical modernization logs/generated artifacts are not active configuration.
 
@@ -70,4 +70,4 @@ Intentionally deferred: SSO, WhatsApp, object storage, automatic configurable ar
 
 ## Current boundary — 2026-10-09
 
-The counts, commerce policies, fixture insertion and recommended next increment above describe the earlier refactor. Current source has removed identity/pricing packages, purchase-policy tests and seed SQL; enabling the retired seed flag fails startup. Reconciliation/Stripe remain planned. Use [current architecture](architecture.md), [roadmap](roadmap.md) and [test inventory](testing.md) for today’s state. No historical runtime results were rerun in this documentation audit.
+The counts, commerce policies, fixture insertion and recommended next increment above describe the earlier refactor. Current source has removed identity/pricing packages, purchase-policy tests and seed SQL; enabling the retired seed flag fails startup. Reconciliation/Stripe remain planned. Use [current architecture](../architecture/overview.md), [roadmap](../architecture/roadmap.md) and [test inventory](../testing/strategy.md) for today’s state. No historical runtime results were rerun in this documentation audit.

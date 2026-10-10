@@ -1,6 +1,6 @@
 # Architecture Decisions & Trade-offs
 
-[English](architecture-decisions.md) | [Português](../pt-BR/architecture-decisions.md)
+[English](architecture-decisions.md) | [Português](../../pt-BR/adr/architecture-decisions.md)
 
 This document explains the current retained catalog and the transition toward payment reconciliation. Implementation statements come from source, migrations, configuration and tests. Unless an existing document records intent, the rationale below evaluates the current architecture rather than claiming to recover its original motivation. Alternatives are review options, not evidence of a historical evaluation.
 
@@ -8,7 +8,7 @@ This document explains the current retained catalog and the transition toward pa
 
 - **Implemented:** Spring Boot catalog, PostgreSQL schema, Angular storefront, deny-by-default HTTP security, Docker development environment and catalog/security and retired-seed rejection tests.
 - **Retired:** CUSTOMER/ADMIN vocabulary, purchase policy and catalog seed. Historical commerce decisions remain in the restructuring report.
-- **Planned / future work:** reconciliation workflows and Stripe test integration; domain rules and access contracts still need definition. See the [roadmap](roadmap.md).
+- **Planned / future work:** reconciliation workflows and Stripe test integration; domain rules and access contracts still need definition. See the [roadmap](../architecture/roadmap.md).
 
 ## Decision: Retain a modular monolith during the domain transition
 
@@ -22,7 +22,7 @@ This document explains the current retained catalog and the transition toward pa
 
 **Revisit when.** Independently owned modules need different deployment schedules or measured workloads require independent scaling. A multi-store product would require an explicit scope change and data-isolation design.
 
-**Evidence:** [CatalogService](../../backend/src/main/java/com/aurorabakery/catalog/application/CatalogService.java), [V2 schema](../../backend/src/main/resources/db/migration/V2__single_bakery_catalog.sql), [domain overview](architecture.md).
+**Evidence:** [CatalogService](../../../backend/src/main/java/com/aurorabakery/catalog/application/CatalogService.java), [V2 schema](../../../backend/src/main/resources/db/migration/V2__single_bakery_catalog.sql), [domain overview](../architecture/overview.md).
 
 ## Decision: Java and Spring Boot for typed application boundaries
 
@@ -36,7 +36,7 @@ This document explains the current retained catalog and the transition toward pa
 
 **Revisit when.** Framework cost materially impedes deployment, or query complexity warrants explicit SQL. First measure the actual workload.
 
-**Evidence:** [pom.xml](../../backend/pom.xml), [ProductSummary](../../backend/src/main/java/com/aurorabakery/catalog/application/ProductSummary.java).
+**Evidence:** [pom.xml](../../../backend/pom.xml), [ProductSummary](../../../backend/src/main/java/com/aurorabakery/catalog/application/ProductSummary.java).
 
 ## Decision: PostgreSQL with versioned schema ownership
 
@@ -50,7 +50,7 @@ This document explains the current retained catalog and the transition toward pa
 
 **Revisit when.** Catalog size warrants pagination/index analysis, or a reviewed retention policy permits removing legacy data. Orders will need transaction and snapshot rules before implementation.
 
-**Evidence:** [migrations](../../backend/src/main/resources/db/migration), [application.yml](../../backend/src/main/resources/application.yml), [PostgreSQL integration tests](../../backend/src/test/java/com/aurorabakery/catalog/ProductPostgresIT.java).
+**Evidence:** [migrations](../../../backend/src/main/resources/db/migration), [application.yml](../../../backend/src/main/resources/application.yml), [PostgreSQL integration tests](../../../backend/src/test/java/com/aurorabakery/catalog/ProductPostgresIT.java).
 
 ## Decision: Availability and historical lifecycle instead of inventory
 
@@ -64,7 +64,7 @@ This document explains the current retained catalog and the transition toward pa
 
 **Revisit when.** Finite batches require stock reservations, or administrative lifecycle/retention requirements become concrete.
 
-**Evidence:** [Product](../../backend/src/main/java/com/aurorabakery/catalog/domain/Product.java), [CatalogService](../../backend/src/main/java/com/aurorabakery/catalog/application/CatalogService.java), [ProductPostgresIT](../../backend/src/test/java/com/aurorabakery/catalog/ProductPostgresIT.java).
+**Evidence:** [Product](../../../backend/src/main/java/com/aurorabakery/catalog/domain/Product.java), [CatalogService](../../../backend/src/main/java/com/aurorabakery/catalog/application/CatalogService.java), [ProductPostgresIT](../../../backend/src/test/java/com/aurorabakery/catalog/ProductPostgresIT.java).
 
 ## Decision: One Angular storefront with explicit request states
 
@@ -78,7 +78,7 @@ This document explains the current retained catalog and the transition toward pa
 
 **Revisit when.** Search indexing/server rendering becomes a requirement, or administration needs an independent release/security boundary.
 
-**Evidence:** [catalog UI and tests](../../frontend/src/app/catalog), [bootstrap/routes](../../frontend/src/main.ts), [proxy](../../frontend/proxy.conf.cjs).
+**Evidence:** [catalog UI and tests](../../../frontend/src/app/catalog), [bootstrap/routes](../../../frontend/src/main.ts), [proxy](../../../frontend/proxy.conf.cjs).
 
 ## Decision: Deny writes until identity is implemented
 
@@ -94,11 +94,11 @@ This document explains the current retained catalog and the transition toward pa
 
 **Revisit when.** Any authenticated or mutation endpoint is introduced; select session/token handling before extending the allowlist.
 
-**Evidence:** [SecurityConfiguration](../../backend/src/main/java/com/aurorabakery/configuration/SecurityConfiguration.java), [API/security tests](../../backend/src/test/java/com/aurorabakery/catalog/ProductApiTest.java), [identity roadmap](roadmap.md).
+**Evidence:** [SecurityConfiguration](../../../backend/src/main/java/com/aurorabakery/configuration/SecurityConfiguration.java), [API/security tests](../../../backend/src/test/java/com/aurorabakery/catalog/ProductApiTest.java), [identity roadmap](../architecture/roadmap.md).
 
 ## Historical decision: Purchase policy retired
 
-The earlier purchase-discount/loyalty policy and its tests were removed on 2026-10-09. They are not prepared current functionality. Their former scope is retained in the [historical report](refactor-report.md). Reconciliation needs its own monetary/currency and matching rules; a catalog `BigDecimal` field alone does not implement financial reconciliation.
+The earlier purchase-discount/loyalty policy and its tests were removed on 2026-10-09. They are not prepared current functionality. Their former scope is retained in the [historical report](../operations/historical-refactor-report.md). Reconciliation needs its own monetary/currency and matching rules; a catalog `BigDecimal` field alone does not implement financial reconciliation.
 
 ## Decision: Keep reconciliation and Stripe planned until contracts exist
 
@@ -108,7 +108,7 @@ The earlier purchase-discount/loyalty policy and its tests were removed on 2026-
 
 **Trade-offs and consequences.** Deferring integration avoids a misleading fake payment/reconciliation flow, while leaving the new product unfinished. Define inputs, money/currency, authorization, signed events and replay semantics before claiming functionality. Historical commerce uploads and loyalty plans are not commitments for this scope.
 
-**Evidence:** [current scope](architecture.md), [roadmap](roadmap.md), [manifest](../../backend/pom.xml), [Compose](../../docker-compose.yml).
+**Evidence:** [current scope](../architecture/overview.md), [roadmap](../architecture/roadmap.md), [manifest](../../../backend/pom.xml), [Compose](../../../docker-compose.yml).
 
 ## Decision: Docker for local reproducibility and layered verification
 
@@ -124,4 +124,4 @@ The earlier purchase-discount/loyalty policy and its tests were removed on 2026-
 
 **Revisit when.** Production hosting, deployment automation or failure recovery is required. Keep test database configuration isolated from development data.
 
-**Evidence:** [Compose](../../docker-compose.yml), [Docker details](docker.md), [tests](../../backend/src/test/java/com/aurorabakery), [frontend tests](../../frontend/src/app/catalog/product-list.spec.ts).
+**Evidence:** [Compose](../../../docker-compose.yml), [Docker details](../docker/runtime.md), [tests](../../../backend/src/test/java/com/aurorabakery), [frontend tests](../../../frontend/src/app/catalog/product-list.spec.ts).

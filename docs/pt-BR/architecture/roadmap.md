@@ -1,10 +1,10 @@
 # Escopo e estado da implementação
 
-[English](../en/roadmap.md) | [Português](roadmap.md)
+[English](../../en/architecture/roadmap.md) | [Português](roadmap.md)
 
 ## Base atual
 
-Identidade de infraestrutura Payment Reconciliation Lab configurada. Spring Boot, Angular, PostgreSQL, migrações Flyway preservadas, segurança que nega por padrão e catálogo legado somente leitura permanecem. Política de compra/consentimento e seed foram removidos; resultados antigos pertencem ao [relatório histórico](refactor-report.md). Testes presentes estão em [testes](testing.md).
+Identidade de infraestrutura Payment Reconciliation Lab configurada. Spring Boot, Angular, PostgreSQL, migrações Flyway preservadas, segurança que nega por padrão e catálogo legado somente leitura permanecem. Política de compra/consentimento e seed foram removidos; resultados antigos pertencem ao [relatório histórico](../operations/historical-refactor-report.md). Testes presentes estão em [testes](../testing/strategy.md).
 
 ## Direção futura
 

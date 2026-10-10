@@ -46,7 +46,7 @@ docker compose -f docker-compose.yml -f compose.development.yaml up -d --no-deps
 docker compose -f docker-compose.yml -f compose.development.yaml stop frontend
 ```
 
-Full startup requires an already initialized, compatible database schema. With Flyway disabled the development backend cannot initialize a fresh schema. Database initialization/migration is an explicit operation outside this safe dependency guide. The earlier dependency audit did not verify full startup; see [current validation](verification.md). After schema readiness, use `docker compose -f docker-compose.yml -f compose.development.yaml up -d`; this starts the database and backend and can expose application writes. Stop only services you started with `docker compose -f docker-compose.yml -f compose.development.yaml stop frontend backend db`. Never remove volumes to recover dependencies.
+Full startup requires an already initialized, compatible database schema. With Flyway disabled the development backend cannot initialize a fresh schema. Database initialization/migration is an explicit operation outside this safe dependency guide. The earlier dependency audit did not verify full startup; see [current validation](../testing/verification.md). After schema readiness, use `docker compose -f docker-compose.yml -f compose.development.yaml up -d`; this starts the database and backend and can expose application writes. Stop only services you started with `docker compose -f docker-compose.yml -f compose.development.yaml stop frontend backend db`. Never remove volumes to recover dependencies.
 
 ## Deleted dependencies and stopped containers
 
